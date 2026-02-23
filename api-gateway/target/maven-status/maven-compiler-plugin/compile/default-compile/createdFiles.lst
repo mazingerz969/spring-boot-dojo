@@ -1,0 +1,3 @@
+com/dojo/gateway/ApiGatewayApplication.class
+com/dojo/gateway/filter/JwtAuthFilter.class
+com/dojo/gateway/filter/JwtAuthFilter$Config.class
