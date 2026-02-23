@@ -1,7 +1,0 @@
-com/dojo/content/service/FlashcardService.class
-com/dojo/content/dto/FlashcardRequest.class
-com/dojo/content/repository/FlashcardRepository.class
-com/dojo/content/ContentServiceApplication.class
-com/dojo/content/entity/Flashcard.class
-com/dojo/content/config/DataSeeder.class
-com/dojo/content/controller/FlashcardController.class

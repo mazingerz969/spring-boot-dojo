@@ -1,7 +1,0 @@
-/home/alaving/proyectos/spring-boot-dojo/content-service/src/main/java/com/dojo/content/controller/FlashcardController.java
-/home/alaving/proyectos/spring-boot-dojo/content-service/src/main/java/com/dojo/content/repository/FlashcardRepository.java
-/home/alaving/proyectos/spring-boot-dojo/content-service/src/main/java/com/dojo/content/service/FlashcardService.java
-/home/alaving/proyectos/spring-boot-dojo/content-service/src/main/java/com/dojo/content/ContentServiceApplication.java
-/home/alaving/proyectos/spring-boot-dojo/content-service/src/main/java/com/dojo/content/dto/FlashcardRequest.java
-/home/alaving/proyectos/spring-boot-dojo/content-service/src/main/java/com/dojo/content/config/DataSeeder.java
-/home/alaving/proyectos/spring-boot-dojo/content-service/src/main/java/com/dojo/content/entity/Flashcard.java
