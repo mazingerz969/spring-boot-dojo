@@ -1,0 +1,10 @@
+/home/alaving/proyectos/spring-boot-dojo/auth-service/src/main/java/com/dojo/auth/dto/AuthResponse.java
+/home/alaving/proyectos/spring-boot-dojo/auth-service/src/main/java/com/dojo/auth/service/JwtService.java
+/home/alaving/proyectos/spring-boot-dojo/auth-service/src/main/java/com/dojo/auth/dto/RegisterRequest.java
+/home/alaving/proyectos/spring-boot-dojo/auth-service/src/main/java/com/dojo/auth/config/SecurityConfig.java
+/home/alaving/proyectos/spring-boot-dojo/auth-service/src/main/java/com/dojo/auth/repository/UserRepository.java
+/home/alaving/proyectos/spring-boot-dojo/auth-service/src/main/java/com/dojo/auth/service/AuthService.java
+/home/alaving/proyectos/spring-boot-dojo/auth-service/src/main/java/com/dojo/auth/controller/AuthController.java
+/home/alaving/proyectos/spring-boot-dojo/auth-service/src/main/java/com/dojo/auth/AuthServiceApplication.java
+/home/alaving/proyectos/spring-boot-dojo/auth-service/src/main/java/com/dojo/auth/dto/LoginRequest.java
+/home/alaving/proyectos/spring-boot-dojo/auth-service/src/main/java/com/dojo/auth/entity/User.java
