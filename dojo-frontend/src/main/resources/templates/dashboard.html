@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Dashboard - Spring Boot Dojo')}"></head>
+<body class="bg-light">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h3>Welcome, <span th:text="${username}">User</span>!</h3>
+            <p class="text-muted">Choose a belt level to begin studying Spring Boot concepts.</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div th:each="belt : ${belts}" class="col-md-4">
+            <div class="card belt-card shadow-sm h-100">
+                <div class="card-header text-center" th:classappend="${belt[2]}">
+                    <h5 class="mb-0" th:text="${belt[1]}">Belt Name</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="belt-icon mb-3">
+                        <i class="bi bi-bookmark-star-fill fs-1"
+                           th:classappend="${belt[0] == 'BLANCO' ? ' text-secondary' :
+                                           belt[0] == 'AMARILLO' ? ' text-warning' :
+                                           belt[0] == 'NARANJA' ? ' text-orange' :
+                                           belt[0] == 'VERDE' ? ' text-success' :
+                                           belt[0] == 'MARRON' ? ' text-brown' :
+                                           ' text-dark'}"></i>
+                    </div>
+                    <p class="text-muted">
+                        <span th:with="cards=${#lists.size(__${'flashcards_' + belt[0]}__)}"
+                              th:text="${cards + ' flashcard' + (cards != 1 ? 's' : '')}">0 flashcards</span>
+                    </p>
+                    <a th:href="@{/study(difficulty=${belt[0]})}" class="btn btn-outline-dark">
+                        <i class="bi bi-book"></i> Study
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+</body>
+</html>
