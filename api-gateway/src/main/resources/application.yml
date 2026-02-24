@@ -22,6 +22,14 @@ spring:
             - StripPrefix=2
             - JwtAuthFilter
 
+        - id: progress-service
+          uri: lb://progress-service
+          predicates:
+            - Path=/api/progress/**
+          filters:
+            - StripPrefix=1
+            - JwtAuthFilter
+
 eureka:
   client:
     service-url:

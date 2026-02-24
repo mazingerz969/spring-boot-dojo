@@ -48,6 +48,18 @@ services:
       eureka-server:
         condition: service_started
 
+  progress-service:
+    build: ./progress-service
+    container_name: progress-service
+    ports:
+      - "8084:8084"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:h2:mem:progressdb
+    depends_on:
+      eureka-server:
+        condition: service_started
+
   dojo-frontend:
     build: ./dojo-frontend
     container_name: dojo-frontend
@@ -60,3 +72,4 @@ services:
       - api-gateway
       - auth-service
       - content-service
+      - progress-service

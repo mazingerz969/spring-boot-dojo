@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Quiz - Spring Boot Dojo')}"></head>
+<body class="bg-light">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container mt-4">
+    <div class="d-flex align-items-center mb-4">
+        <h3 class="mb-0">
+            <i class="bi bi-patch-question"></i>
+            <span th:text="${beltLabel}">Belt</span> - Quiz Mode
+        </h3>
+        <span class="badge bg-primary ms-auto fs-6">
+            Question <span th:text="${questionNumber}">1</span> / <span th:text="${totalQuestions}">5</span>
+        </span>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header" th:classappend="${isCorrect} ? 'bg-success text-white' : 'bg-danger text-white'">
+                    <h5 class="mb-0">
+                        <i th:class="${isCorrect} ? 'bi bi-check-circle-fill' : 'bi bi-x-circle-fill'"></i>
+                        <span th:text="${isCorrect} ? 'Correct!' : 'Incorrect'"></span>
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-4" th:text="${quiz['question']}">Question text</h5>
+
+                    <div class="list-group mb-4">
+                        <div th:each="opt, iter : ${optionKeys}"
+                             class="list-group-item d-flex align-items-center"
+                             th:classappend="${iter.index == correctOption} ? ' list-group-item-success' : (${iter.index == selectedOption and !isCorrect} ? ' list-group-item-danger' : '')">
+                            <span class="badge me-2"
+                                  th:classappend="${iter.index == correctOption} ? ' bg-success' : ' bg-secondary'"
+                                  th:text="${optionLabels[iter.index]}">A</span>
+                            <span th:text="${quiz[opt]}">Option</span>
+                            <i th:if="${iter.index == correctOption}" class="bi bi-check-lg text-success ms-auto"></i>
+                            <i th:if="${iter.index == selectedOption and !isCorrect}" class="bi bi-x-lg text-danger ms-auto"></i>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <span class="me-3 text-muted">
+                            Score: <strong th:text="${correct}">0</strong> / <span th:text="${questionNumber}">1</span>
+                        </span>
+                        <a th:if="${hasNext}" href="/quiz/next" class="btn btn-primary btn-lg">
+                            <i class="bi bi-arrow-right"></i> Next Question
+                        </a>
+                        <a th:unless="${hasNext}" href="/quiz/results" class="btn btn-success btn-lg">
+                            <i class="bi bi-trophy"></i> See Results
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+</body>
+</html>

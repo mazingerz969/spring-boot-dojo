@@ -2,6 +2,7 @@ package com.dojo.content.controller;
 
 import com.dojo.content.dto.FlashcardRequest;
 import com.dojo.content.entity.Flashcard;
+import com.dojo.content.entity.UserFlashcardHistory;
 import com.dojo.content.service.FlashcardService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -56,6 +57,28 @@ public class FlashcardController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         flashcardService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/next")
+    public ResponseEntity<List<Flashcard>> getNext(
+            @RequestParam String difficulty,
+            @RequestParam(required = false) String userId) {
+        List<Flashcard> flashcards = flashcardService.findNextForUser(difficulty, userId);
+        return ResponseEntity.ok(flashcards);
+    }
+
+    @PostMapping("/{id}/answer")
+    public ResponseEntity<Map<String, Object>> recordAnswer(
+            @PathVariable Long id,
+            @RequestParam String userId,
+            @RequestParam boolean correct) {
+        UserFlashcardHistory history = flashcardService.recordFlashcardAnswer(id, userId, correct);
+        return ResponseEntity.ok(Map.of(
+                "flashcardId", id,
+                "priority", history.getPriority(),
+                "timesCorrect", history.getTimesCorrect(),
+                "timesWrong", history.getTimesWrong()
+        ));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

@@ -6,36 +6,119 @@
 <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
 <div class="container mt-4">
+    <!-- User Stats Row -->
     <div class="row mb-4">
-        <div class="col">
+        <div class="col-md-8">
             <h3>Welcome, <span th:text="${username}">User</span>!</h3>
             <p class="text-muted">Choose a belt level to begin studying Spring Boot concepts.</p>
         </div>
     </div>
 
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <i class="bi bi-fire fs-2 text-danger"></i>
+                    <h4 class="mt-2 mb-0" th:text="${currentStreak}">0</h4>
+                    <small class="text-muted">Current Streak</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <i class="bi bi-trophy fs-2 text-warning"></i>
+                    <h4 class="mt-2 mb-0" th:text="${bestStreak}">0</h4>
+                    <small class="text-muted">Best Streak</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <i class="bi bi-check-circle fs-2 text-success"></i>
+                    <h4 class="mt-2 mb-0" th:text="${totalCorrect}">0</h4>
+                    <small class="text-muted">Total Correct</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <i class="bi bi-bullseye fs-2 text-primary"></i>
+                    <h4 class="mt-2 mb-0">
+                        <span th:text="${totalAttempted > 0 ? (totalCorrect * 100) / totalAttempted : 0}">0</span>%
+                    </h4>
+                    <small class="text-muted">Accuracy</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Belt Cards -->
     <div class="row g-4">
         <div th:each="belt : ${belts}" class="col-md-4">
-            <div class="card belt-card shadow-sm h-100">
-                <div class="card-header text-center" th:classappend="${belt[2]}">
+            <div class="card belt-card shadow-sm h-100"
+                 th:with="beltUnlocked=${unlockedMap != null ? unlockedMap.getOrDefault(belt[0], true) : true}, beltMastered=${masteredMap != null ? masteredMap.getOrDefault(belt[0], false) : false}, beltPct=${percentageMap != null ? percentageMap.getOrDefault(belt[0], 0) : 0}"
+                 th:classappend="${!beltUnlocked} ? ' opacity-50' : ''">
+                <div class="card-header text-center position-relative" th:classappend="${belt[2]}">
                     <h5 class="mb-0" th:text="${belt[1]}">Belt Name</h5>
+                    <!-- Mastered badge -->
+                    <span th:if="${beltMastered}"
+                          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
+                        <i class="bi bi-star-fill"></i> Mastered
+                    </span>
+                    <!-- Locked badge -->
+                    <span th:if="${!beltUnlocked}"
+                          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary">
+                        <i class="bi bi-lock-fill"></i> Locked
+                    </span>
                 </div>
                 <div class="card-body text-center">
                     <div class="belt-icon mb-3">
-                        <i class="bi bi-bookmark-star-fill fs-1"
+                        <i th:if="${beltUnlocked}"
+                           class="bi bi-bookmark-star-fill fs-1"
                            th:classappend="${belt[0] == 'BLANCO' ? ' text-secondary' :
                                            belt[0] == 'AMARILLO' ? ' text-warning' :
                                            belt[0] == 'NARANJA' ? ' text-orange' :
                                            belt[0] == 'VERDE' ? ' text-success' :
                                            belt[0] == 'MARRON' ? ' text-brown' :
                                            ' text-dark'}"></i>
+                        <i th:unless="${beltUnlocked}"
+                           class="bi bi-lock-fill fs-1 text-muted"></i>
                     </div>
-                    <p class="text-muted">
+
+                    <!-- Progress bar -->
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between mb-1">
+                            <small class="text-muted">Progress</small>
+                            <small class="text-muted" th:text="${beltPct} + '%'">0%</small>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar" role="progressbar"
+                                 th:classappend="${beltMastered} ? 'bg-success' : (${beltPct >= 50} ? 'bg-warning' : 'bg-primary')"
+                                 th:style="'width: ' + ${beltPct} + '%'"></div>
+                        </div>
+                    </div>
+
+                    <p class="text-muted mb-2">
                         <span th:with="cards=${#lists.size(__${'flashcards_' + belt[0]}__)}"
                               th:text="${cards + ' flashcard' + (cards != 1 ? 's' : '')}">0 flashcards</span>
                     </p>
-                    <a th:href="@{/study(difficulty=${belt[0]})}" class="btn btn-outline-dark">
-                        <i class="bi bi-book"></i> Study
-                    </a>
+
+                    <div th:if="${beltUnlocked}">
+                        <a th:href="@{/study(difficulty=${belt[0]})}" class="btn btn-outline-dark btn-sm me-1">
+                            <i class="bi bi-book"></i> Study
+                        </a>
+                        <a th:href="@{/quiz(difficulty=${belt[0]})}" class="btn btn-primary btn-sm">
+                            <i class="bi bi-patch-question"></i> Quiz
+                        </a>
+                    </div>
+                    <div th:unless="${beltUnlocked}">
+                        <button class="btn btn-secondary btn-sm" disabled>
+                            <i class="bi bi-lock"></i> Master previous belt to unlock
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
