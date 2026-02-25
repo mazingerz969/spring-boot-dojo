@@ -15,16 +15,8 @@
         <a class="navbar-brand" href="/dashboard">
             <i class="bi bi-fire"></i> Spring Boot Dojo
         </a>
-        <div class="navbar-nav me-auto" th:if="${session.username != null}">
-            <a class="nav-link" href="/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
-            <a class="nav-link" href="/study"><i class="bi bi-book"></i> Study</a>
-            <a class="nav-link" href="/quiz"><i class="bi bi-question-circle"></i> Quiz</a>
-            <a class="nav-link" href="/exercises"><i class="bi bi-code-slash"></i> Ejercicios</a>
-        </div>
         <div class="navbar-nav ms-auto" th:if="${session.username != null}">
             <a class="nav-link" href="/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
-            <a class="nav-link" href="/study"><i class="bi bi-card-text"></i> Study</a>
-            <a class="nav-link" href="/quiz"><i class="bi bi-question-circle"></i> Quiz</a>
             <a class="nav-link" href="/exercises"><i class="bi bi-code-slash"></i> Ejercicios</a>
             <span class="navbar-text mx-3">
                 <i class="bi bi-person-circle"></i>
