@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Ejercicios - Spring Boot Dojo')}"></head>
+<body class="bg-dark text-light">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container mt-4">
+    <div class="d-flex align-items-center mb-4">
+        <a href="/dashboard" class="btn btn-outline-secondary me-3"><i class="bi bi-arrow-left"></i></a>
+        <h2><i class="bi bi-code-slash"></i> Ejercicios de Código</h2>
+    </div>
+
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <div th:if="${#maps.isEmpty(exercisesByBelt)}" class="alert alert-info">
+        No hay ejercicios disponibles. Asegúrate de que content-service está corriendo.
+    </div>
+
+    <div th:each="entry : ${exercisesByBelt}" class="mb-4">
+        <h4 class="mb-3">
+            <span th:switch="${entry.key}">
+                <span th:case="'BLANCO'"><span class="badge" style="background:#f0f0f0;color:#333">⬜ Blanco</span></span>
+                <span th:case="'AMARILLO'"><span class="badge" style="background:#ffd700;color:#333">🟡 Amarillo</span></span>
+                <span th:case="'NARANJA'"><span class="badge" style="background:#ff8c00;color:#fff">🟠 Naranja</span></span>
+                <span th:case="'VERDE'"><span class="badge" style="background:#28a745;color:#fff">🟢 Verde</span></span>
+                <span th:case="'MARRON'"><span class="badge" style="background:#8b4513;color:#fff">🟤 Marrón</span></span>
+                <span th:case="'NEGRO'"><span class="badge bg-dark border border-light">⚫ Negro</span></span>
+            </span>
+        </h4>
+
+        <div class="row g-3">
+            <div th:each="ex : ${entry.value}" class="col-md-4">
+                <div class="card bg-secondary text-light h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title" th:text="${ex['title']}">Título</h5>
+                        <p class="card-text text-light-emphasis small flex-grow-1"
+                           th:text="${#strings.abbreviate(ex['description'], 120)}">Descripción</p>
+                        <a th:href="@{/exercises/{id}(id=${ex['id']})}"
+                           class="btn btn-outline-warning mt-2">
+                            <i class="bi bi-play-fill"></i> Resolver
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -22,6 +22,22 @@ spring:
             - StripPrefix=2
             - JwtAuthFilter
 
+        - id: exercises-service
+          uri: lb://content-service
+          predicates:
+            - Path=/api/exercises/**
+          filters:
+            - StripPrefix=1
+            - JwtAuthFilter
+
+        - id: exercises-service
+          uri: lb://content-service
+          predicates:
+            - Path=/api/exercises/**
+          filters:
+            - StripPrefix=1
+            - JwtAuthFilter
+
         - id: progress-service
           uri: lb://progress-service
           predicates:

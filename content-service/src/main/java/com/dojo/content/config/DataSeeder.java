@@ -1,7 +1,9 @@
 package com.dojo.content.config;
 
+import com.dojo.content.entity.CodeExercise;
 import com.dojo.content.entity.Flashcard;
 import com.dojo.content.entity.Quiz;
+import com.dojo.content.repository.CodeExerciseRepository;
 import com.dojo.content.repository.FlashcardRepository;
 import com.dojo.content.repository.QuizRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -149,6 +151,73 @@ public class DataSeeder {
                                 "What is Spring Native and GraalVM, and what are the benefits?",
                                 "Spring Native compiles Spring Boot apps to native executables using GraalVM's ahead-of-time compilation. Native images start in milliseconds and use less memory, ideal for serverless and containerized deployments, but have longer build times.",
                                 "ADVANCED", "NEGRO")
+                ));
+            }
+        };
+    }
+
+    @Bean
+    CommandLineRunner seedExercises(CodeExerciseRepository repository) {
+        return args -> {
+            if (repository.count() == 0) {
+                repository.saveAll(List.of(
+                    // BLANCO - Spring Basics
+                    new CodeExercise(
+                        "Crear un @Bean de configuración",
+                        "Crea una clase de configuración que defina un bean de tipo String llamado 'appName' que retorne \"Spring Boot Dojo\".",
+                        "BLANCO",
+                        "@Configuration\npublic class AppConfig {\n\n    // TODO: Crea un método con @Bean que retorne un String\n\n}",
+                        "@Configuration\npublic class AppConfig {\n\n    @Bean\n    public String appName() {\n        return \"Spring Boot Dojo\";\n    }\n}",
+                        "@Configuration,@Bean,public,return",
+                        "Usa @Configuration en la clase y @Bean en el método. El método debe ser public y retornar un valor."
+                    ),
+                    new CodeExercise(
+                        "Inyección con @Autowired",
+                        "Crea un servicio que inyecte un repositorio usando inyección por constructor. La clase debe ser un @Service.",
+                        "BLANCO",
+                        "@Service\npublic class UserService {\n\n    // TODO: Inyecta UserRepository por constructor\n\n}",
+                        "@Service\npublic class UserService {\n\n    private final UserRepository userRepository;\n\n    @Autowired\n    public UserService(UserRepository userRepository) {\n        this.userRepository = userRepository;\n    }\n}",
+                        "@Service,private final,UserRepository,@Autowired,public UserService",
+                        "Declara el campo como private final, crea un constructor con @Autowired que reciba el repositorio."
+                    ),
+                    new CodeExercise(
+                        "Crear un @Component",
+                        "Crea un componente llamado EmailValidator que tenga un método 'isValid(String email)' que retorne boolean.",
+                        "BLANCO",
+                        "// TODO: Marca esta clase como componente de Spring\npublic class EmailValidator {\n\n    // TODO: Método que valide un email\n\n}",
+                        "@Component\npublic class EmailValidator {\n\n    public boolean isValid(String email) {\n        return email != null && email.contains(\"@\");\n    }\n}",
+                        "@Component,public boolean isValid,String email,return",
+                        "Usa @Component para que Spring lo detecte. El método debe recibir un String y retornar boolean."
+                    ),
+
+                    // AMARILLO - REST APIs
+                    new CodeExercise(
+                        "Crear un @RestController con GET",
+                        "Crea un controlador REST para productos con un endpoint GET /products que retorne una lista de strings.",
+                        "AMARILLO",
+                        "// TODO: Marca como controlador REST\n// TODO: Mapea a /products\npublic class ProductController {\n\n    // TODO: Endpoint GET que retorne lista de productos\n\n}",
+                        "@RestController\n@RequestMapping(\"/products\")\npublic class ProductController {\n\n    @GetMapping\n    public List<String> getAll() {\n        return List.of(\"Laptop\", \"Mouse\", \"Keyboard\");\n    }\n}",
+                        "@RestController,@RequestMapping,@GetMapping,public,List",
+                        "Usa @RestController + @RequestMapping para la ruta base. @GetMapping para el método GET."
+                    ),
+                    new CodeExercise(
+                        "Crear una entidad JPA",
+                        "Crea una entidad JPA 'Product' con campos: id (Long, autogenerado), name (String, no nulo) y price (Double).",
+                        "AMARILLO",
+                        "// TODO: Marca como entidad JPA\n// TODO: Define la tabla\npublic class Product {\n\n    // TODO: Id autogenerado\n    private Long id;\n\n    // TODO: Campo obligatorio\n    private String name;\n\n    private Double price;\n\n    // Getters y setters...\n}",
+                        "@Entity\n@Table(name = \"products\")\npublic class Product {\n\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n\n    @Column(nullable = false)\n    private String name;\n\n    private Double price;\n}",
+                        "@Entity,@Table,@Id,@GeneratedValue,@Column,nullable = false",
+                        "Usa @Entity y @Table en la clase. @Id + @GeneratedValue para el id. @Column(nullable = false) para campos obligatorios."
+                    ),
+                    new CodeExercise(
+                        "Crear un DTO con validación",
+                        "Crea un DTO 'CreateProductRequest' con campos: name (@NotBlank), price (@Min(0)) y description (@Size(max=500)).",
+                        "AMARILLO",
+                        "public class CreateProductRequest {\n\n    // TODO: name no puede estar vacío\n    private String name;\n\n    // TODO: price mínimo 0\n    private Double price;\n\n    // TODO: description máximo 500 caracteres\n    private String description;\n\n    // Getters y setters...\n}",
+                        "public class CreateProductRequest {\n\n    @NotBlank\n    private String name;\n\n    @Min(0)\n    private Double price;\n\n    @Size(max = 500)\n    private String description;\n}",
+                        "@NotBlank,@Min,@Size,private String name,private Double price",
+                        "Usa @NotBlank para strings obligatorios, @Min para valores mínimos, @Size para limitar longitud."
+                    )
                 ));
             }
         };
