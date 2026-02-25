@@ -5,101 +5,84 @@
 <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
 <div class="container mt-4">
-    <div class="d-flex align-items-center mb-3">
-        <a href="/exercises" class="btn btn-outline-secondary me-3"><i class="bi bi-arrow-left"></i></a>
-        <h3 th:text="${exercise != null ? exercise['title'] : 'Ejercicio'}">Ejercicio</h3>
-    </div>
+    <a href="/exercises" class="btn btn-outline-secondary mb-3"><i class="bi bi-arrow-left"></i> Volver</a>
 
     <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
-    <div th:if="${exercise != null}">
-        <!-- Cinturón badge -->
-        <span th:switch="${exercise['belt']}" class="mb-3 d-inline-block">
-            <span th:case="'BLANCO'" class="badge" style="background:#f0f0f0;color:#333">⬜ Blanco</span>
-            <span th:case="'AMARILLO'" class="badge" style="background:#ffd700;color:#333">🟡 Amarillo</span>
-            <span th:case="'NARANJA'" class="badge" style="background:#ff8c00;color:#fff">🟠 Naranja</span>
-            <span th:case="'VERDE'" class="badge" style="background:#28a745;color:#fff">🟢 Verde</span>
-            <span th:case="'MARRON'" class="badge" style="background:#8b4513;color:#fff">🟤 Marrón</span>
-            <span th:case="'NEGRO'" class="badge bg-dark border border-light">⚫ Negro</span>
-        </span>
+    <div th:if="${exercise}" class="row">
+        <div class="col-lg-8">
+            <div class="card bg-secondary text-light mb-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0" th:text="${exercise['title']}">Título</h4>
+                    <span th:switch="${exercise['belt']}">
+                        <span th:case="'BLANCO'" class="badge" style="background:#f0f0f0;color:#333">Blanco</span>
+                        <span th:case="'AMARILLO'" class="badge" style="background:#ffd700;color:#333">Amarillo</span>
+                        <span th:case="'NARANJA'" class="badge" style="background:#ff8c00;color:#fff">Naranja</span>
+                        <span th:case="'VERDE'" class="badge" style="background:#28a745;color:#fff">Verde</span>
+                        <span th:case="'MARRON'" class="badge" style="background:#8b4513;color:#fff">Marrón</span>
+                        <span th:case="'NEGRO'" class="badge bg-dark border border-light">Negro</span>
+                    </span>
+                </div>
+                <div class="card-body">
+                    <p th:text="${exercise['description']}" class="mb-3"></p>
 
-        <!-- Descripción -->
-        <div class="card bg-secondary text-light mb-3 mt-2">
-            <div class="card-body">
-                <h5><i class="bi bi-book"></i> Enunciado</h5>
-                <p th:text="${exercise['description']}">Descripción del ejercicio</p>
+                    <form th:action="@{/exercises/{id}/validate(id=${exercise['id']})}" method="post">
+                        <label class="form-label fw-bold"><i class="bi bi-code-square"></i> Tu código:</label>
+                        <textarea name="code" class="form-control bg-dark text-success border-secondary"
+                                  rows="14"
+                                  style="font-family:'Courier New',monospace;font-size:14px;tab-size:4;"
+                                  th:text="${userCode != null ? userCode : exercise['starterCode']}"
+                                  spellcheck="false"></textarea>
+                        <div class="mt-3 d-flex gap-2">
+                            <button type="submit" class="btn btn-warning">
+                                <i class="bi bi-check-circle"></i> Validar
+                            </button>
+                            <button type="button" class="btn btn-outline-info" onclick="document.getElementById('hints').classList.toggle('d-none')">
+                                <i class="bi bi-lightbulb"></i> Pistas
+                            </button>
+                            <button type="button" class="btn btn-outline-danger" onclick="document.getElementById('solution').classList.toggle('d-none')">
+                                <i class="bi bi-eye"></i> Ver solución
+                            </button>
+                        </div>
+                    </form>
+
+                    <div id="hints" class="d-none mt-3 alert alert-info">
+                        <strong><i class="bi bi-lightbulb-fill"></i> Pistas:</strong>
+                        <p class="mb-0 mt-1" th:text="${exercise['hints']}"></p>
+                    </div>
+
+                    <div id="solution" class="d-none mt-3">
+                        <div class="alert alert-secondary">
+                            <strong><i class="bi bi-unlock"></i> Solución:</strong>
+                            <pre class="mt-2 mb-0 text-success" th:text="${exercise['solution']}"></pre>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Resultado validación -->
-        <div th:if="${result}" class="mb-3">
-            <div th:if="${result['passed']}" class="alert alert-success">
-                <h5><i class="bi bi-check-circle-fill"></i> ¡Correcto!</h5>
-                <p th:text="${result['message']}"></p>
-                <p><strong>Puntuación:</strong> <span th:text="${result['score']}">100</span>%</p>
-            </div>
-            <div th:unless="${result['passed']}" class="alert alert-warning">
-                <h5><i class="bi bi-x-circle-fill"></i> Incorrecto</h5>
-                <p th:text="${result['message']}"></p>
-                <p><strong>Puntuación:</strong> <span th:text="${result['score']}">0</span>%</p>
-                <p th:if="${result['missingKeywords'] != null && !result['missingKeywords'].isEmpty()}">
-                    <strong>Te falta usar:</strong>
-                    <code th:each="kw : ${result['missingKeywords']}" th:text="${kw}" class="me-2"></code>
-                </p>
-            </div>
-        </div>
-
-        <!-- Editor de código -->
-        <form th:action="@{/exercises/{id}/validate(id=${exercise['id']})}" method="post">
-            <div class="mb-3">
-                <label class="form-label"><i class="bi bi-pencil-square"></i> Tu código:</label>
-                <textarea name="code" class="form-control bg-dark text-success border-secondary"
-                          rows="15"
-                          style="font-family: 'Courier New', monospace; font-size: 14px; tab-size: 4;"
-                          th:text="${userCode != null ? userCode : exercise['starterCode']}"
-                          spellcheck="false"></textarea>
-            </div>
-            <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-warning">
-                    <i class="bi bi-play-fill"></i> Validar código
-                </button>
-                <button type="button" class="btn btn-outline-info" onclick="toggleHints()">
-                    <i class="bi bi-lightbulb"></i> Pistas
-                </button>
-                <button type="button" class="btn btn-outline-success" onclick="toggleSolution()">
-                    <i class="bi bi-eye"></i> Ver solución
-                </button>
-            </div>
-        </form>
-
-        <!-- Pistas -->
-        <div id="hints-box" class="card bg-info bg-opacity-25 text-light mt-3" style="display:none;">
-            <div class="card-body">
-                <h6><i class="bi bi-lightbulb-fill"></i> Pistas</h6>
-                <p th:text="${exercise['hints']}">Pistas del ejercicio</p>
-            </div>
-        </div>
-
-        <!-- Solución -->
-        <div id="solution-box" class="card bg-success bg-opacity-25 text-light mt-3" style="display:none;">
-            <div class="card-body">
-                <h6><i class="bi bi-code-square"></i> Solución</h6>
-                <pre class="text-success" style="font-size: 14px;"><code th:text="${exercise['solution']}">Solución</code></pre>
+        <div class="col-lg-4">
+            <div th:if="${result}" class="card mb-3"
+                 th:classappend="${result['passed']} ? 'bg-success text-white' : 'bg-danger text-white'">
+                <div class="card-body">
+                    <h5 th:text="${result['passed']} ? '✅ ¡Correcto!' : '❌ Incorrecto'"></h5>
+                    <p th:text="${result['message']}"></p>
+                    <div class="mb-2">
+                        <strong>Puntuación:</strong> <span th:text="${result['score'] + '%'}"></span>
+                    </div>
+                    <div th:if="${result['missingKeywords'] != null && !result['missingKeywords'].isEmpty()}">
+                        <strong>Te falta:</strong>
+                        <ul class="mb-0 mt-1">
+                            <li th:each="kw : ${result['missingKeywords']}">
+                                <code th:text="${kw}" class="text-warning"></code>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
-<script>
-function toggleHints() {
-    const el = document.getElementById('hints-box');
-    el.style.display = el.style.display === 'none' ? 'block' : 'none';
-}
-function toggleSolution() {
-    const el = document.getElementById('solution-box');
-    el.style.display = el.style.display === 'none' ? 'block' : 'none';
-}
-</script>
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 </body>
