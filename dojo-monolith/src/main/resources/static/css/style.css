@@ -1,0 +1,41 @@
+.bg-orange {
+    background-color: #fd7e14 !important;
+    color: white;
+}
+
+.bg-brown {
+    background-color: #795548 !important;
+    color: white;
+}
+
+.text-orange {
+    color: #fd7e14 !important;
+}
+
+.text-brown {
+    color: #795548 !important;
+}
+
+.belt-card {
+    transition: transform 0.2s;
+}
+
+.belt-card:hover {
+    transform: translateY(-5px);
+}
+
+.flashcard {
+    transition: box-shadow 0.2s;
+}
+
+.flashcard:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.answer-section {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.375rem;
+}
+
+/* Guía - estilos movidos al template inline */

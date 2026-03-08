@@ -1,0 +1,30 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: dojo-monolith
+  datasource:
+    url: jdbc:h2:mem:dojodb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    show-sql: false
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
+  h2:
+    console:
+      enabled: true
+  thymeleaf:
+    cache: false
+
+jwt:
+  secret: dojo-secret-key-that-is-at-least-256-bits-long-for-hs256-algorithm-security
+  expiration: 86400000
