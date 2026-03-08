@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Guía - Spring Boot Dojo')}"></head>
+<style>
+    .guia-content { color: #ffffff !important; }
+    .guia-content * { color: #ffffff !important; }
+    .guia-content pre code { color: #8be9fd !important; }
+    .guia-content a { color: #58a6ff !important; text-decoration: underline; }
+</style>
+<body class="bg-dark text-light">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container py-4">
+    <h2 class="mb-4"><i class="bi bi-book"></i> Guía: Crear Microservicios desde Cero</h2>
+    
+    <div class="row">
+        <!-- Sidebar con pasos -->
+        <div class="col-md-3">
+            <div class="list-group">
+                <a th:each="p : ${pasos}" 
+                   th:href="@{/guia(paso=${p.num - 1})}"
+                   th:classappend="${p.num - 1 == pasoActual} ? 'active' : ''"
+                   class="list-group-item list-group-item-action bg-dark text-light border-secondary">
+                    <i th:class="${p.icon}" class="bi me-2"></i>
+                    <small>
+                        <span class="badge bg-secondary me-1" th:text="${p.num}">1</span>
+                        <span th:text="${p.title}">Paso</span>
+                    </small>
+                </a>
+            </div>
+        </div>
+
+        <!-- Contenido del paso -->
+        <div class="col-md-9" th:if="${detalle != null}">
+            <div class="card bg-dark border-secondary">
+                <div class="card-header bg-secondary">
+                    <h4 class="mb-0">
+                        <i th:class="${detalle.icon}" class="bi me-2"></i>
+                        <span class="badge bg-warning text-dark me-2" th:text="'Paso ' + ${detalle.num}">Paso 1</span>
+                        <span th:text="${detalle.title}">Título</span>
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Intro -->
+                    <div class="alert alert-info bg-dark border-info text-light">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <span th:text="${detalle.intro}">Introducción</span>
+                    </div>
+
+                    <!-- Secciones -->
+                    <div th:each="sec : ${detalle.sections}" class="mb-4">
+                        <h5 class="text-warning">
+                            <span th:text="${sec.title}">Sección</span>
+                        </h5>
+                        <div class="bg-black rounded p-3 guia-content" th:utext="${sec.content}">
+                            Contenido
+                        </div>
+                    </div>
+
+                    <!-- Navegación -->
+                    <div class="d-flex justify-content-between mt-4">
+                        <a th:if="${pasoActual > 0}" 
+                           th:href="@{/guia(paso=${pasoActual - 1})}"
+                           class="btn btn-outline-light">
+                            <i class="bi bi-arrow-left"></i> Anterior
+                        </a>
+                        <span th:if="${pasoActual == 0}"></span>
+                        
+                        <span class="text-muted align-self-center" 
+                              th:text="'Paso ' + ${detalle.num} + ' de ' + ${totalPasos}">
+                        </span>
+
+                        <a th:if="${pasoActual < totalPasos - 1}" 
+                           th:href="@{/guia(paso=${pasoActual + 1})}"
+                           class="btn btn-warning">
+                            Siguiente <i class="bi bi-arrow-right"></i>
+                        </a>
+                        <span th:if="${pasoActual == totalPasos - 1}" 
+                              class="btn btn-success disabled">
+                            <i class="bi bi-check-circle"></i> ¡Completado!
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+</body>
+</html>

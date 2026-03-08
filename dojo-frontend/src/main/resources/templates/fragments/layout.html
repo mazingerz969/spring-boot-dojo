@@ -18,6 +18,7 @@
         <div class="navbar-nav ms-auto" th:if="${session.username != null}">
             <a class="nav-link" href="/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
             <a class="nav-link" href="/exercises"><i class="bi bi-code-slash"></i> Ejercicios</a>
+            <a class="nav-link" href="/guia"><i class="bi bi-book"></i> Guía</a>
             <span class="navbar-text mx-3">
                 <i class="bi bi-person-circle"></i>
                 <span th:text="${session.username}">User</span>
