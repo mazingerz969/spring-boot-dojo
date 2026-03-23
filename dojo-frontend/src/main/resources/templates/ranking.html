@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Ranking - Spring Boot Dojo')}"></head>
+<body class="bg-light">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h3><i class="bi bi-trophy text-warning"></i> Ranking del Dojo</h3>
+            <p class="text-muted">Compite con otros estudiantes del dojo</p>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs mb-3" id="rankingTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="global-tab" data-bs-toggle="tab"
+                    data-bs-target="#global" type="button" role="tab">
+                <i class="bi bi-star-fill"></i> Respuestas Correctas
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="streak-tab" data-bs-toggle="tab"
+                    data-bs-target="#streak" type="button" role="tab">
+                <i class="bi bi-fire"></i> Mejor Racha
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="belts-tab" data-bs-toggle="tab"
+                    data-bs-target="#belts" type="button" role="tab">
+                <i class="bi bi-award"></i> Cinturones Dominados
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="rankingTabContent">
+        <!-- Global Ranking -->
+        <div class="tab-pane fade show active" id="global" role="tabpanel">
+            <div th:if="${globalRanking == null}" class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle"></i> No se pudieron cargar los rankings.
+            </div>
+            <div th:if="${globalRanking != null}" class="card shadow-sm border-0">
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width: 60px;">#</th>
+                                <th>Usuario</th>
+                                <th>Correctas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="entry : ${globalRanking['top10']}"
+                                th:classappend="${entry['currentUser']} ? 'table-warning fw-bold' : ''">
+                                <td>
+                                    <span th:if="${entry['rank'] == 1}"><i class="bi bi-trophy-fill text-warning"></i></span>
+                                    <span th:if="${entry['rank'] == 2}"><i class="bi bi-trophy-fill text-secondary"></i></span>
+                                    <span th:if="${entry['rank'] == 3}"><i class="bi bi-trophy-fill" style="color: #cd7f32;"></i></span>
+                                    <span th:if="${entry['rank'] > 3}" th:text="${entry['rank']}"></span>
+                                </td>
+                                <td>
+                                    <i class="bi bi-person-circle me-1"></i>
+                                    <span th:text="${entry['userId']}">user</span>
+                                </td>
+                                <td th:text="${entry['value']}">0</td>
+                            </tr>
+                            <!-- Current user outside top 10 -->
+                            <tr th:if="${globalRanking['currentUser'] != null}">
+                                <td colspan="3" class="text-center text-muted py-1">...</td>
+                            </tr>
+                            <tr th:if="${globalRanking['currentUser'] != null}" class="table-warning fw-bold">
+                                <td>
+                                    <span th:text="${globalRanking['currentUser']['rank']}"></span>
+                                </td>
+                                <td>
+                                    <i class="bi bi-person-circle me-1"></i>
+                                    <span th:text="${globalRanking['currentUser']['userId']}">user</span>
+                                </td>
+                                <td th:text="${globalRanking['currentUser']['value']}">0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Streak Ranking -->
+        <div class="tab-pane fade" id="streak" role="tabpanel">
+            <div th:if="${streakRanking == null}" class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle"></i> No se pudieron cargar los rankings.
+            </div>
+            <div th:if="${streakRanking != null}" class="card shadow-sm border-0">
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width: 60px;">#</th>
+                                <th>Usuario</th>
+                                <th>D&iacute;as</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="entry : ${streakRanking['top10']}"
+                                th:classappend="${entry['currentUser']} ? 'table-warning fw-bold' : ''">
+                                <td>
+                                    <span th:if="${entry['rank'] == 1}"><i class="bi bi-trophy-fill text-warning"></i></span>
+                                    <span th:if="${entry['rank'] == 2}"><i class="bi bi-trophy-fill text-secondary"></i></span>
+                                    <span th:if="${entry['rank'] == 3}"><i class="bi bi-trophy-fill" style="color: #cd7f32;"></i></span>
+                                    <span th:if="${entry['rank'] > 3}" th:text="${entry['rank']}"></span>
+                                </td>
+                                <td>
+                                    <i class="bi bi-person-circle me-1"></i>
+                                    <span th:text="${entry['userId']}">user</span>
+                                </td>
+                                <td th:text="${entry['value']}">0</td>
+                            </tr>
+                            <tr th:if="${streakRanking['currentUser'] != null}">
+                                <td colspan="3" class="text-center text-muted py-1">...</td>
+                            </tr>
+                            <tr th:if="${streakRanking['currentUser'] != null}" class="table-warning fw-bold">
+                                <td>
+                                    <span th:text="${streakRanking['currentUser']['rank']}"></span>
+                                </td>
+                                <td>
+                                    <i class="bi bi-person-circle me-1"></i>
+                                    <span th:text="${streakRanking['currentUser']['userId']}">user</span>
+                                </td>
+                                <td th:text="${streakRanking['currentUser']['value']}">0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Belts Ranking -->
+        <div class="tab-pane fade" id="belts" role="tabpanel">
+            <div th:if="${beltsRanking == null}" class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle"></i> No se pudieron cargar los rankings.
+            </div>
+            <div th:if="${beltsRanking != null}" class="card shadow-sm border-0">
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width: 60px;">#</th>
+                                <th>Usuario</th>
+                                <th>Cinturones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="entry : ${beltsRanking['top10']}"
+                                th:classappend="${entry['currentUser']} ? 'table-warning fw-bold' : ''">
+                                <td>
+                                    <span th:if="${entry['rank'] == 1}"><i class="bi bi-trophy-fill text-warning"></i></span>
+                                    <span th:if="${entry['rank'] == 2}"><i class="bi bi-trophy-fill text-secondary"></i></span>
+                                    <span th:if="${entry['rank'] == 3}"><i class="bi bi-trophy-fill" style="color: #cd7f32;"></i></span>
+                                    <span th:if="${entry['rank'] > 3}" th:text="${entry['rank']}"></span>
+                                </td>
+                                <td>
+                                    <i class="bi bi-person-circle me-1"></i>
+                                    <span th:text="${entry['userId']}">user</span>
+                                </td>
+                                <td th:text="${entry['value']}">0</td>
+                            </tr>
+                            <tr th:if="${beltsRanking['currentUser'] != null}">
+                                <td colspan="3" class="text-center text-muted py-1">...</td>
+                            </tr>
+                            <tr th:if="${beltsRanking['currentUser'] != null}" class="table-warning fw-bold">
+                                <td>
+                                    <span th:text="${beltsRanking['currentUser']['rank']}"></span>
+                                </td>
+                                <td>
+                                    <i class="bi bi-person-circle me-1"></i>
+                                    <span th:text="${beltsRanking['currentUser']['userId']}">user</span>
+                                </td>
+                                <td th:text="${beltsRanking['currentUser']['value']}">0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+</body>
+</html>

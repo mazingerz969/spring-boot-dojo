@@ -1,6 +1,7 @@
 package com.dojo.progress.controller;
 
 import com.dojo.progress.dto.AnswerRequest;
+import com.dojo.progress.dto.RankingResponse;
 import com.dojo.progress.entity.BeltProgress;
 import com.dojo.progress.entity.UserProgress;
 import com.dojo.progress.service.ProgressService;
@@ -55,5 +56,20 @@ public class ProgressController {
     public ResponseEntity<BeltProgress> getBeltProgressForLevel(
             @PathVariable String username, @PathVariable String beltLevel) {
         return ResponseEntity.ok(progressService.getBeltProgressForLevel(username, beltLevel));
+    }
+
+    @GetMapping("/ranking/global")
+    public ResponseEntity<RankingResponse> getGlobalRanking(@RequestParam String username) {
+        return ResponseEntity.ok(progressService.getGlobalRanking(username));
+    }
+
+    @GetMapping("/ranking/streak")
+    public ResponseEntity<RankingResponse> getStreakRanking(@RequestParam String username) {
+        return ResponseEntity.ok(progressService.getStreakRanking(username));
+    }
+
+    @GetMapping("/ranking/belts")
+    public ResponseEntity<RankingResponse> getBeltsRanking(@RequestParam String username) {
+        return ResponseEntity.ok(progressService.getBeltsRanking(username));
     }
 }

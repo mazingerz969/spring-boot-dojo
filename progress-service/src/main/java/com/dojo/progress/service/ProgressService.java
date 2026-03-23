@@ -1,14 +1,18 @@
 package com.dojo.progress.service;
 
 import com.dojo.progress.dto.AnswerRequest;
+import com.dojo.progress.dto.RankingEntryDto;
+import com.dojo.progress.dto.RankingResponse;
 import com.dojo.progress.entity.BeltProgress;
 import com.dojo.progress.entity.UserProgress;
 import com.dojo.progress.repository.BeltProgressRepository;
 import com.dojo.progress.repository.UserProgressRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -85,5 +89,86 @@ public class ProgressService {
     public BeltProgress getBeltProgressForLevel(String username, String beltLevel) {
         return beltProgressRepository.findByUserIdAndBeltLevel(username, beltLevel)
                 .orElse(new BeltProgress(username, beltLevel));
+    }
+
+    public RankingResponse getGlobalRanking(String currentUsername) {
+        List<UserProgress> top10 = userProgressRepository.findTop10ByOrderByTotalCorrectDesc();
+        List<RankingEntryDto> entries = new ArrayList<>();
+        boolean userInTop = false;
+
+        for (int i = 0; i < top10.size(); i++) {
+            UserProgress up = top10.get(i);
+            boolean isCurrent = up.getUserId().equals(currentUsername);
+            if (isCurrent) userInTop = true;
+            entries.add(new RankingEntryDto(i + 1, up.getUserId(), up.getTotalCorrect(), up.getTotalAttempted(), isCurrent));
+        }
+
+        RankingEntryDto currentUserEntry = null;
+        if (!userInTop) {
+            UserProgress current = userProgressRepository.findByUserId(currentUsername).orElse(null);
+            if (current != null) {
+                long rank = userProgressRepository.countByTotalCorrectGreaterThan(current.getTotalCorrect()) + 1;
+                currentUserEntry = new RankingEntryDto((int) rank, current.getUserId(), current.getTotalCorrect(), current.getTotalAttempted(), true);
+            }
+        }
+
+        return new RankingResponse("global", entries, currentUserEntry);
+    }
+
+    public RankingResponse getStreakRanking(String currentUsername) {
+        List<UserProgress> top10 = userProgressRepository.findTop10ByOrderByBestStreakDesc();
+        List<RankingEntryDto> entries = new ArrayList<>();
+        boolean userInTop = false;
+
+        for (int i = 0; i < top10.size(); i++) {
+            UserProgress up = top10.get(i);
+            boolean isCurrent = up.getUserId().equals(currentUsername);
+            if (isCurrent) userInTop = true;
+            entries.add(new RankingEntryDto(i + 1, up.getUserId(), up.getBestStreak(), up.getTotalAttempted(), isCurrent));
+        }
+
+        RankingEntryDto currentUserEntry = null;
+        if (!userInTop) {
+            UserProgress current = userProgressRepository.findByUserId(currentUsername).orElse(null);
+            if (current != null) {
+                long rank = userProgressRepository.countByBestStreakGreaterThan(current.getBestStreak()) + 1;
+                currentUserEntry = new RankingEntryDto((int) rank, current.getUserId(), current.getBestStreak(), current.getTotalAttempted(), true);
+            }
+        }
+
+        return new RankingResponse("streak", entries, currentUserEntry);
+    }
+
+    public RankingResponse getBeltsRanking(String currentUsername) {
+        List<Object[]> top10 = beltProgressRepository.findTopByMasteredBelts(PageRequest.of(0, 10));
+        List<RankingEntryDto> entries = new ArrayList<>();
+        boolean userInTop = false;
+
+        for (int i = 0; i < top10.size(); i++) {
+            Object[] row = top10.get(i);
+            String uId = (String) row[0];
+            int masteredCount = ((Long) row[1]).intValue();
+            boolean isCurrent = uId.equals(currentUsername);
+            if (isCurrent) userInTop = true;
+            entries.add(new RankingEntryDto(i + 1, uId, masteredCount, 0, isCurrent));
+        }
+
+        RankingEntryDto currentUserEntry = null;
+        if (!userInTop) {
+            long myMastered = beltProgressRepository.countMasteredByUserId(currentUsername);
+            if (myMastered > 0) {
+                // Count how many users have more mastered belts
+                long rank = 1;
+                for (Object[] row : beltProgressRepository.findTopByMasteredBelts(PageRequest.of(0, Integer.MAX_VALUE))) {
+                    int count = ((Long) row[1]).intValue();
+                    if (count > myMastered) {
+                        rank++;
+                    }
+                }
+                currentUserEntry = new RankingEntryDto((int) rank, currentUsername, (int) myMastered, 0, true);
+            }
+        }
+
+        return new RankingResponse("belts", entries, currentUserEntry);
     }
 }

@@ -13,3 +13,9 @@
 **/.factorypath
 **/logs/
 **/*.log
+.pids/
+.vscode/
+**/*.mv.db
+**/*.bak
+**/node_modules/
+dojo-frontend-next/.next/

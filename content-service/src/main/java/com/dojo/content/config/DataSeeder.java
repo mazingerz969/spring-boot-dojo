@@ -282,7 +282,515 @@ public class DataSeeder {
                     new Flashcard(
                         "¿Qué es el patrón CQRS y cuándo aplicarlo?",
                         "CQRS (Command Query Responsibility Segregation) separa lecturas y escrituras en modelos diferentes. Las queries leen de un modelo optimizado para lectura, los commands escriben en otro. Útil cuando los patrones de lectura y escritura son muy diferentes.",
-                        "AVANZADO", "NEGRO")
+                        "AVANZADO", "NEGRO"),
+
+                    // ══════════════════════════════════════════
+                    // BLANCO - JAVA_CORE
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Qué es un HashMap en Java?",
+                        "HashMap es una estructura de datos que almacena pares clave-valor usando una tabla hash. Permite búsquedas, inserciones y eliminaciones en O(1) promedio. Las claves deben implementar hashCode() y equals(). No garantiza orden y permite una clave null.",
+                        "JAVA_CORE", "BLANCO"),
+                    new Flashcard(
+                        "¿Diferencia entre ArrayList y array en Java?",
+                        "Un array tiene tamaño fijo definido en su creación (int[] arr = new int[10]). ArrayList es dinámico: crece automáticamente al agregar elementos. ArrayList solo almacena objetos (no primitivos), mientras que los arrays admiten primitivos. ArrayList ofrece métodos útiles como add(), remove(), size().",
+                        "JAVA_CORE", "BLANCO"),
+                    new Flashcard(
+                        "¿Diferencia entre equals() y == en Java?",
+                        "== compara referencias de memoria: verifica si dos variables apuntan al mismo objeto. equals() compara el contenido lógico del objeto. Para String, == puede dar false aunque el texto sea idéntico si son objetos distintos. Siempre usa equals() para comparar Strings y objetos.",
+                        "JAVA_CORE", "BLANCO"),
+                    new Flashcard(
+                        "¿Qué son las excepciones en Java?",
+                        "Las excepciones son eventos que interrumpen el flujo normal del programa cuando ocurre un error. Java tiene una jerarquía: Throwable → Error (problemas graves de la JVM) y Exception (recuperables). RuntimeException y sus subclases son unchecked; las demás son checked y deben declararse o capturarse.",
+                        "JAVA_CORE", "BLANCO"),
+                    new Flashcard(
+                        "¿Para qué sirve try-catch-finally en Java?",
+                        "try contiene el código que puede lanzar una excepción. catch captura y maneja la excepción específica. finally siempre se ejecuta, haya o no excepción, ideal para cerrar recursos. Desde Java 7 existe try-with-resources que cierra automáticamente objetos que implementan AutoCloseable.",
+                        "JAVA_CORE", "BLANCO"),
+
+                    // ══════════════════════════════════════════
+                    // BLANCO - LAMBDAS_STREAMS
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Qué es una lambda en Java?",
+                        "Una lambda es una función anónima que puede tratarse como un valor. Sintaxis: (parámetros) -> expresión. Ejemplo: (x, y) -> x + y. Las lambdas implementan interfaces funcionales (con un solo método abstracto). Permiten escribir código más conciso especialmente con Streams y callbacks.",
+                        "LAMBDAS_STREAMS", "BLANCO"),
+                    new Flashcard(
+                        "¿Qué es una interfaz funcional en Java?",
+                        "Una interfaz funcional tiene exactamente un método abstracto y se puede anotar con @FunctionalInterface. Son la base para usar lambdas. Java proporciona muchas: Predicate<T> (retorna boolean), Consumer<T> (acepta T, no retorna), Function<T,R> (acepta T, retorna R), Supplier<T> (no acepta, retorna T).",
+                        "LAMBDAS_STREAMS", "BLANCO"),
+                    new Flashcard(
+                        "¿Cómo se usa Predicate y Consumer con lambdas?",
+                        "Predicate<String> esMayorDe5 = s -> s.length() > 5; esMayorDe5.test(\"Hola\") retorna false. Consumer<String> imprimir = s -> System.out.println(s); imprimir.accept(\"Hola\") imprime el texto. Ambas son interfaces funcionales de java.util.function usadas frecuentemente con Streams.",
+                        "LAMBDAS_STREAMS", "BLANCO"),
+
+                    // ══════════════════════════════════════════
+                    // BLANCO - GIT
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Qué hacen git add, git commit y git push?",
+                        "git add <archivo> mueve cambios al área de staging (preparación). git commit -m \"mensaje\" guarda un snapshot permanente en el repositorio local. git push origin <rama> sube los commits al repositorio remoto (GitHub, GitLab). Es el flujo básico: modificar → add → commit → push.",
+                        "GIT", "BLANCO"),
+                    new Flashcard(
+                        "¿Cómo funcionan las ramas en Git?",
+                        "Una rama (branch) es un puntero a un commit que permite desarrollar en paralelo sin afectar main. git branch feature/login crea la rama. git checkout feature/login o git switch feature/login cambia a ella. git merge feature/login integra los cambios en la rama actual. git branch -d borra la rama.",
+                        "GIT", "BLANCO"),
+                    new Flashcard(
+                        "¿Para qué sirve el archivo .gitignore?",
+                        ".gitignore especifica qué archivos y directorios Git debe ignorar y no rastrear. Es esencial para excluir archivos compilados (target/, *.class), archivos de IDE (.idea/, .vscode/), secretos (.env, application-secrets.properties) y dependencias (node_modules/). Los patrones usan wildcards como * y **.",
+                        "GIT", "BLANCO"),
+
+                    // ══════════════════════════════════════════
+                    // BLANCO - SQL_DB
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Cómo funciona SELECT en SQL?",
+                        "SELECT recupera datos de una o más tablas. SELECT * FROM usuarios trae todas las columnas. SELECT nombre, email FROM usuarios trae solo esas columnas. Es la instrucción más usada en SQL y se puede combinar con WHERE, ORDER BY, LIMIT y otras cláusulas para filtrar y ordenar resultados.",
+                        "SQL_DB", "BLANCO"),
+                    new Flashcard(
+                        "¿Cómo se usan WHERE y ORDER BY en SQL?",
+                        "WHERE filtra filas según una condición: SELECT * FROM productos WHERE precio > 100. ORDER BY ordena resultados: ORDER BY nombre ASC (ascendente) o DESC (descendente). Se pueden combinar: SELECT * FROM productos WHERE activo = true ORDER BY precio DESC. WHERE va antes de ORDER BY.",
+                        "SQL_DB", "BLANCO"),
+                    new Flashcard(
+                        "¿Cómo se insertan, actualizan y eliminan datos en SQL?",
+                        "INSERT INTO usuarios (nombre, email) VALUES ('Ana', 'ana@mail.com') inserta un nuevo registro. UPDATE usuarios SET email = 'nuevo@mail.com' WHERE id = 1 modifica un registro existente (¡siempre usa WHERE!). DELETE FROM usuarios WHERE id = 1 elimina el registro. Sin WHERE en UPDATE/DELETE afectas todos los registros.",
+                        "SQL_DB", "BLANCO"),
+
+                    // ══════════════════════════════════════════
+                    // AMARILLO - JAVA_CORE
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Diferencia entre HashMap y TreeMap?",
+                        "HashMap usa tabla hash: O(1) para get/put pero no garantiza orden. TreeMap usa árbol rojo-negro: O(log n) para operaciones pero mantiene las claves ordenadas naturalmente o por Comparator. Usa HashMap cuando no necesitas orden (rendimiento máximo) y TreeMap cuando necesitas iterar las claves en orden.",
+                        "JAVA_CORE", "AMARILLO"),
+                    new Flashcard(
+                        "¿Diferencia entre excepciones checked y unchecked?",
+                        "Checked exceptions heredan de Exception (no de RuntimeException) y el compilador obliga a manejarlas con try-catch o declarar throws. Ejemplos: IOException, SQLException. Unchecked heredan de RuntimeException y son opcionales de manejar. Ejemplos: NullPointerException, IllegalArgumentException. Las unchecked indican errores de programación.",
+                        "JAVA_CORE", "AMARILLO"),
+                    new Flashcard(
+                        "¿Por qué String es inmutable en Java?",
+                        "String es inmutable porque una vez creado su valor no puede cambiar. Esto permite el String Pool: la JVM reutiliza literales String en memoria. Ventajas: thread-safe por naturaleza, seguro como clave en HashMap, cacheable. Si necesitas modificaciones frecuentes usa StringBuilder (no thread-safe) o StringBuffer (thread-safe).",
+                        "JAVA_CORE", "AMARILLO"),
+                    new Flashcard(
+                        "¿Qué es el autoboxing en Java?",
+                        "Autoboxing es la conversión automática entre primitivos y sus clases wrapper: int ↔ Integer, double ↔ Double, boolean ↔ Boolean. Java lo hace automáticamente al asignar o pasar parámetros. Unboxing es el proceso inverso. Cuidado: puede lanzar NullPointerException si el wrapper es null al hacer unboxing.",
+                        "JAVA_CORE", "AMARILLO"),
+
+                    // ══════════════════════════════════════════
+                    // AMARILLO - LAMBDAS_STREAMS
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Cómo se usan Stream.filter(), map() y collect()?",
+                        "filter() selecciona elementos que cumplen un Predicate. map() transforma cada elemento. collect() materializa el stream en una colección. Ejemplo: List<String> nombres = personas.stream().filter(p -> p.getEdad() > 18).map(Persona::getNombre).collect(Collectors.toList()). Los streams son lazy: solo procesan al llamar la operación terminal.",
+                        "LAMBDAS_STREAMS", "AMARILLO"),
+                    new Flashcard(
+                        "¿Qué es Optional en Java y para qué sirve?",
+                        "Optional<T> es un contenedor que puede o no tener un valor, diseñado para evitar NullPointerException. Optional.of(valor) crea uno con valor, Optional.empty() sin valor, Optional.ofNullable(valor) acepta null. Métodos clave: isPresent(), get(), orElse(default), orElseThrow(), ifPresent(consumer), map().",
+                        "LAMBDAS_STREAMS", "AMARILLO"),
+                    new Flashcard(
+                        "¿Qué son las referencias a métodos en Java?",
+                        "Las referencias a métodos son una forma más concisa de lambdas cuando esta solo llama a un método existente. Tipos: Clase::métodoEstático (Integer::parseInt), instancia::método (System.out::println), Clase::métodoInstancia (String::toUpperCase), Clase::new para constructores. Son equivalentes a lambdas pero más legibles.",
+                        "LAMBDAS_STREAMS", "AMARILLO"),
+
+                    // ══════════════════════════════════════════
+                    // AMARILLO - SQL_DB
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Diferencia entre INNER JOIN y LEFT JOIN?",
+                        "INNER JOIN retorna solo las filas que tienen coincidencia en ambas tablas. LEFT JOIN retorna todas las filas de la tabla izquierda y las coincidencias de la derecha (NULL si no hay). Ejemplo: SELECT u.nombre, p.titulo FROM usuarios u LEFT JOIN posts p ON u.id = p.usuario_id retorna todos los usuarios aunque no tengan posts.",
+                        "SQL_DB", "AMARILLO"),
+                    new Flashcard(
+                        "¿Para qué sirve GROUP BY en SQL?",
+                        "GROUP BY agrupa filas con el mismo valor en una columna para aplicar funciones de agregación. SELECT categoria, COUNT(*) as total, AVG(precio) as promedio FROM productos GROUP BY categoria agrupa productos por categoría y calcula conteo y precio promedio. HAVING filtra grupos (como WHERE pero para grupos): HAVING COUNT(*) > 5.",
+                        "SQL_DB", "AMARILLO"),
+                    new Flashcard(
+                        "¿Qué son los índices en bases de datos?",
+                        "Un índice es una estructura de datos (B-tree normalmente) que acelera las búsquedas en una columna a costa de espacio y tiempo de escritura. CREATE INDEX idx_email ON usuarios(email) acelera WHERE email = '...'. Las claves primarias y únicas tienen índices automáticos. Demasiados índices ralentizan INSERT/UPDATE/DELETE.",
+                        "SQL_DB", "AMARILLO"),
+
+                    // ══════════════════════════════════════════
+                    // AMARILLO - PATRONES_DISENO
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Qué es un patrón de diseño?",
+                        "Un patrón de diseño es una solución reutilizable a un problema recurrente en el diseño de software. Los patrones del libro GoF se clasifican en creacionales (cómo crear objetos), estructurales (cómo componer objetos) y de comportamiento (cómo interactúan). No son código copy-paste sino guías conceptuales adaptables.",
+                        "PATRONES_DISENO", "AMARILLO"),
+                    new Flashcard(
+                        "¿Qué es el patrón Singleton?",
+                        "Singleton garantiza que una clase tenga solo una instancia y provee un punto de acceso global. Implementación: constructor privado, campo estático con la instancia, método getInstance() que crea la instancia solo si es null. En Spring, todos los beans son Singleton por defecto, manejados por el contenedor IoC.",
+                        "PATRONES_DISENO", "AMARILLO"),
+                    new Flashcard(
+                        "¿Qué es el patrón Factory?",
+                        "Factory Method define una interfaz para crear objetos pero deja que las subclases decidan qué clase instanciar. Desacopla la creación de objetos de su uso. Ejemplo: una NotificationFactory que según el tipo retorna EmailNotification, SMSNotification o PushNotification. Facilita agregar nuevos tipos sin modificar el código cliente.",
+                        "PATRONES_DISENO", "AMARILLO"),
+
+                    // ══════════════════════════════════════════
+                    // NARANJA - SPRING_CORE
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Para qué sirven @Qualifier y @Primary en Spring?",
+                        "@Primary marca un bean como preferido cuando hay múltiples candidatos del mismo tipo. @Qualifier(\"nombreBean\") especifica exactamente qué bean inyectar. Si tienes dos implementaciones de PaymentService (CreditCardService y PaypalService), @Primary en una evita ambigüedad, o @Qualifier en el punto de inyección selecciona explícitamente.",
+                        "SPRING_CORE", "NARANJA"),
+                    new Flashcard(
+                        "¿Cuál es el ciclo de vida de un bean en Spring?",
+                        "Spring instancia el bean → inyecta dependencias → llama @PostConstruct (inicialización personalizada) → el bean está listo para usar → al cerrar el contexto llama @PreDestroy (limpieza). También puedes implementar InitializingBean/DisposableBean o usar init-method/destroy-method en @Bean. @PostConstruct es la forma más común y limpia.",
+                        "SPRING_CORE", "NARANJA"),
+                    new Flashcard(
+                        "¿Qué son los perfiles en Spring y cómo se usan?",
+                        "Los perfiles (profiles) permiten tener configuraciones diferentes según el entorno. @Profile(\"dev\") en una clase o bean solo lo activa en el perfil dev. Se activan con spring.profiles.active=dev en properties o variable de entorno. Muy útil para tener bases de datos H2 en dev y PostgreSQL en prod.",
+                        "SPRING_CORE", "NARANJA"),
+                    new Flashcard(
+                        "¿Qué es @Conditional en Spring?",
+                        "@Conditional crea beans condicionalmente según una Condition personalizada. Spring Boot lo usa extensamente internamente: @ConditionalOnClass (solo si una clase existe en classpath), @ConditionalOnMissingBean (solo si no hay otro bean del tipo), @ConditionalOnProperty (según valor de propiedad). Son la base de la auto-configuración.",
+                        "SPRING_CORE", "NARANJA"),
+
+                    // ══════════════════════════════════════════
+                    // NARANJA - SPRING_BOOT
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Qué es @ConfigurationProperties en Spring Boot?",
+                        "@ConfigurationProperties enlaza grupos de propiedades del application.properties a un objeto Java. @ConfigurationProperties(prefix = \"app.mail\") en una clase con campos host, port, username los enlaza automáticamente con app.mail.host, app.mail.port. Más limpio que múltiples @Value. Soporta validación con @Validated.",
+                        "SPRING_BOOT", "NARANJA"),
+                    new Flashcard(
+                        "¿Qué son los starters de Spring Boot?",
+                        "Los starters son dependencias predefinidas que agrupan todo lo necesario para una funcionalidad. spring-boot-starter-web incluye Spring MVC, Tomcat embebido y Jackson. spring-boot-starter-data-jpa incluye Hibernate, Spring Data y JDBC. Eliminan la necesidad de gestionar versiones compatibles manualmente.",
+                        "SPRING_BOOT", "NARANJA"),
+                    new Flashcard(
+                        "¿Cómo funciona la auto-configuración de Spring Boot?",
+                        "Spring Boot escanea el classpath y configura automáticamente componentes según las dependencias presentes. Si detecta H2 en classpath, configura un DataSource en memoria automáticamente. Esto ocurre porque @EnableAutoConfiguration (incluida en @SpringBootApplication) carga las clases listadas en META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports.",
+                        "SPRING_BOOT", "NARANJA"),
+
+                    // ══════════════════════════════════════════
+                    // NARANJA - JAVA_CORE
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Diferencia entre Comparable y Comparator?",
+                        "Comparable define el orden natural de una clase implementando compareTo() en la propia clase. Comparator es externo: define criterios de ordenación alternativos sin modificar la clase. Collections.sort(lista) usa Comparable. Collections.sort(lista, comparator) usa Comparator. Comparator.comparing(Persona::getEdad) crea un Comparator usando lambdas.",
+                        "JAVA_CORE", "NARANJA"),
+                    new Flashcard(
+                        "¿Qué son los genéricos en Java?",
+                        "Los genéricos permiten escribir código que funciona con cualquier tipo manteniendo type-safety en tiempo de compilación. List<String> garantiza que solo contiene Strings. <T> en una clase o método es un parámetro de tipo. Bounded wildcards: <T extends Number> limita a subclases de Number. Los genéricos usan type erasure en runtime.",
+                        "JAVA_CORE", "NARANJA"),
+                    new Flashcard(
+                        "¿Qué es ConcurrentHashMap y cuándo usarlo?",
+                        "ConcurrentHashMap es una versión thread-safe de HashMap optimizada para concurrencia. A diferencia de Hashtable (que sincroniza todo el mapa), ConcurrentHashMap divide el mapa en segmentos y solo bloquea el segmento afectado, permitiendo lecturas y escrituras concurrentes con alta eficiencia. Úsalo en entornos multi-hilo.",
+                        "JAVA_CORE", "NARANJA"),
+
+                    // ══════════════════════════════════════════
+                    // NARANJA - SQL_DB
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Qué son las subconsultas en SQL?",
+                        "Una subconsulta es una SELECT anidada dentro de otra consulta. SELECT nombre FROM usuarios WHERE id IN (SELECT usuario_id FROM pedidos WHERE total > 1000) obtiene usuarios con pedidos grandes. Pueden ir en WHERE, FROM (subquery como tabla) o SELECT (columna calculada). Correlacionadas referencian la query externa y se ejecutan por cada fila.",
+                        "SQL_DB", "NARANJA"),
+                    new Flashcard(
+                        "¿Qué significan las propiedades ACID en bases de datos?",
+                        "ACID garantiza la fiabilidad de las transacciones. Atomicidad: todo o nada, si falla cualquier parte se revierte todo. Consistencia: la BD pasa de un estado válido a otro válido. Isolation: transacciones concurrentes no se interfieren. Durabilidad: los cambios confirmados persisten aunque caiga el sistema.",
+                        "SQL_DB", "NARANJA"),
+                    new Flashcard(
+                        "¿Qué es la normalización en bases de datos?",
+                        "La normalización organiza tablas para reducir redundancia y dependencias. 1NF: elimina grupos repetidos, cada celda tiene un valor atómico. 2NF: elimina dependencias parciales (todo campo depende de toda la PK). 3NF: elimina dependencias transitivas (campos no clave no dependen de otros no clave). Más allá de 3NF es raro en práctica.",
+                        "SQL_DB", "NARANJA"),
+
+                    // ══════════════════════════════════════════
+                    // VERDE - SPRING_DATA_JPA
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Cómo se usa @Query con JPQL en Spring Data JPA?",
+                        "@Query(\"SELECT u FROM Usuario u WHERE u.email = :email\") permite escribir consultas JPQL personalizadas. JPQL usa nombres de clases y campos Java (no tablas SQL). Con nativeQuery = true puedes usar SQL puro. Los parámetros se inyectan con @Param(\"email\") o posicionalmente con ?1. Útil para consultas complejas que el método naming no puede expresar.",
+                        "SPRING_DATA_JPA", "VERDE"),
+                    new Flashcard(
+                        "¿Qué es la propagación de transacciones en @Transactional?",
+                        "La propagación define cómo se comporta una transacción cuando se llama desde otra. REQUIRED (default): usa la existente o crea una nueva. REQUIRES_NEW: siempre crea una nueva, suspendiendo la existente. NESTED: crea un savepoint dentro de la existente. SUPPORTS: usa la existente si hay, sino sin transacción. Importante para diseñar correctamente el comportamiento transaccional.",
+                        "SPRING_DATA_JPA", "VERDE"),
+                    new Flashcard(
+                        "¿Qué es la Specification API en Spring Data JPA?",
+                        "Specification es una interfaz que encapsula una cláusula WHERE como objeto, basada en el patrón Specification de DDD. Permite construir consultas dinámicas y combinarlas: specs.and(otherSpec), specs.or(otherSpec). El repositorio debe extender JpaSpecificationExecutor<T>. Ideal para filtros de búsqueda con múltiples criterios opcionales.",
+                        "SPRING_DATA_JPA", "VERDE"),
+                    new Flashcard(
+                        "¿Cómo funciona la auditoría en Spring Data JPA?",
+                        "Spring Data JPA puede auto-rellenar campos de auditoría. Anota la entidad con @EntityListeners(AuditingEntityListener.class) y usa @CreatedDate, @LastModifiedDate, @CreatedBy, @LastModifiedBy en los campos. Habilita con @EnableJpaAuditing en la configuración. Para @CreatedBy necesitas implementar AuditorAware<T> que retorna el usuario actual.",
+                        "SPRING_DATA_JPA", "VERDE"),
+
+                    // ══════════════════════════════════════════
+                    // VERDE - SPRING_SECURITY
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Cómo funciona el flujo JWT en detalle?",
+                        "1) Usuario envía credenciales al endpoint /auth/login. 2) Server valida y genera JWT firmado con clave secreta (header.payload.signature en base64). 3) Cliente guarda el token y lo envía en cada request como Authorization: Bearer <token>. 4) Filtro JwtAuthenticationFilter extrae y valida el token, carga el usuario y lo pone en SecurityContext. El token expira según exp claim.",
+                        "SPRING_SECURITY", "VERDE"),
+                    new Flashcard(
+                        "¿Cómo funciona @PreAuthorize en Spring Security?",
+                        "@PreAuthorize evalúa una expresión SpEL antes de ejecutar el método. @PreAuthorize(\"hasRole('ADMIN')\") solo permite admins. @PreAuthorize(\"hasAuthority('READ_USERS')\") requiere permiso específico. @PreAuthorize(\"#id == authentication.principal.id\") permite acceso solo al propio usuario. Requiere @EnableMethodSecurity en la configuración.",
+                        "SPRING_SECURITY", "VERDE"),
+                    new Flashcard(
+                        "¿Qué es OAuth2 y cómo se relaciona con Spring Security?",
+                        "OAuth2 es un protocolo de autorización que permite a aplicaciones acceder a recursos en nombre del usuario sin compartir credenciales. Flujos principales: Authorization Code (web apps), Client Credentials (server-to-server). Spring Security OAuth2 simplifica implementar login con Google/GitHub (@EnableOAuth2Sso) o proteger APIs como Resource Server.",
+                        "SPRING_SECURITY", "VERDE"),
+                    new Flashcard(
+                        "¿Qué es CSRF y cómo lo maneja Spring Security?",
+                        "CSRF (Cross-Site Request Forgery) es un ataque donde un sitio malicioso hace peticiones en nombre del usuario autenticado. Spring Security incluye protección CSRF por defecto para formularios HTML usando tokens sincronizados. Para APIs REST stateless normalmente se deshabilita (http.csrf().disable()) porque usan JWT que ya protege contra CSRF.",
+                        "SPRING_SECURITY", "VERDE"),
+
+                    // ══════════════════════════════════════════
+                    // VERDE - LAMBDAS_STREAMS
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Cómo se usa Collectors.groupingBy?",
+                        "Collectors.groupingBy agrupa elementos de un stream en un Map según una función clasificadora. personas.stream().collect(Collectors.groupingBy(Persona::getDepartamento)) retorna Map<String, List<Persona>>. Se puede combinar con un downstream collector: groupingBy(Persona::getDept, Collectors.counting()) cuenta personas por departamento.",
+                        "LAMBDAS_STREAMS", "VERDE"),
+                    new Flashcard(
+                        "¿Cómo funciona reduce() en Streams?",
+                        "reduce() combina los elementos de un stream en un único resultado aplicando una función acumuladora. stream.reduce(0, (acc, x) -> acc + x) suma todos los elementos. También: reduce(identity, BinaryOperator). Para Optional sin identidad: reduce(BinaryOperator). Es la operación base de muchos Collectors. Suma, producto, concatenación son casos comunes.",
+                        "LAMBDAS_STREAMS", "VERDE"),
+                    new Flashcard(
+                        "¿Para qué sirve flatMap() en Streams?",
+                        "flatMap() aplana streams anidados. Si tienes List<List<String>>, stream().flatMap(Collection::stream) produce un Stream<String> plano. Útil cuando map() retornaría Stream<Stream<T>>. Ejemplo: orders.stream().flatMap(order -> order.getItems().stream()) obtiene todos los items de todas las órdenes en un único stream.",
+                        "LAMBDAS_STREAMS", "VERDE"),
+                    new Flashcard(
+                        "¿Qué son los parallel streams y cuándo usarlos?",
+                        "parallelStream() divide el stream en sub-streams procesados en paralelo usando ForkJoinPool. Útil para operaciones CPU-intensivas sobre colecciones grandes. Cuidado: el overhead de gestión de hilos puede hacerlo más lento para colecciones pequeñas. Nunca uses parallel streams con operaciones con estado compartido sin sincronización. Mide antes de optimizar.",
+                        "LAMBDAS_STREAMS", "VERDE"),
+
+                    // ══════════════════════════════════════════
+                    // VERDE - PATRONES_DISENO
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Qué es el patrón Strategy?",
+                        "Strategy define una familia de algoritmos intercambiables en tiempo de ejecución. Una interfaz Strategy con el método ejecutar(), múltiples implementaciones concretas, y el contexto que delega a la estrategia actual. Ejemplo: un procesador de pagos con estrategias CreditCard, PayPal, Crypto. Elimina condicionales if-else para seleccionar comportamiento.",
+                        "PATRONES_DISENO", "VERDE"),
+                    new Flashcard(
+                        "¿Qué es el patrón Observer?",
+                        "Observer define una relación uno-a-muchos donde cuando un objeto (Subject) cambia estado, todos sus dependientes (Observers) son notificados automáticamente. El Subject mantiene una lista de Observers y los notifica en cada cambio. En Java: java.util.Observable (legacy), EventListener. Spring usa ApplicationEvent/ApplicationListener para eventos del contexto.",
+                        "PATRONES_DISENO", "VERDE"),
+                    new Flashcard(
+                        "¿Qué es el patrón Builder?",
+                        "Builder separa la construcción de un objeto complejo de su representación. Útil cuando un constructor tiene muchos parámetros opcionales. Ejemplo: Person.builder().nombre(\"Ana\").edad(30).email(\"ana@mail.com\").build(). Lombok @Builder genera el builder automáticamente. Evita el problema del \"telescoping constructor\" con múltiples sobrecargas.",
+                        "PATRONES_DISENO", "VERDE"),
+                    new Flashcard(
+                        "¿Qué es el patrón Adapter?",
+                        "Adapter convierte la interfaz de una clase en otra interfaz que el cliente espera. Permite que clases incompatibles trabajen juntas. Ejemplo: tienes una biblioteca externa con métoodoViejo() pero tu código espera metodoNuevo(); el Adapter implementa la interfaz esperada y delega al código externo. Muy usado al integrar sistemas legacy.",
+                        "PATRONES_DISENO", "VERDE"),
+
+                    // ══════════════════════════════════════════
+                    // AZUL - SPRING_CORE (AOP)
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Qué es AOP (Programación Orientada a Aspectos) en Spring?",
+                        "AOP permite separar concerns transversales (logging, seguridad, transacciones) del código de negocio. Un Aspect agrupa advice (código a ejecutar) aplicado en Joinpoints (métodos). Pointcut define qué métodos son afectados. Spring AOP usa proxies en runtime. @Aspect + @Component define un aspecto. Ejemplo: @Around para medir tiempos de ejecución.",
+                        "SPRING_CORE", "AZUL"),
+                    new Flashcard(
+                        "¿Qué tipos de advice existen en Spring AOP?",
+                        "@Before ejecuta antes del método. @After ejecuta siempre después (haya o no excepción). @AfterReturning ejecuta solo si el método retorna exitosamente. @AfterThrowing ejecuta solo si lanza excepción. @Around es el más potente: envuelve completamente el método, puede modificar argumentos, resultado o prevenir la ejecución con ProceedingJoinPoint.",
+                        "SPRING_CORE", "AZUL"),
+                    new Flashcard(
+                        "¿Diferencia entre proxy JDK y proxy CGLIB en Spring?",
+                        "Spring AOP crea proxies para implementar aspectos. JDK proxy requiere que la clase implemente una interfaz y crea un proxy de esa interfaz. CGLIB genera una subclase de la clase objetivo y no requiere interfaz. Spring Boot usa CGLIB por defecto. Limitación de CGLIB: no puede proxear métodos final ni clases final. Si llamas un método desde el mismo bean el proxy se omite (self-invocation problem).",
+                        "SPRING_CORE", "AZUL"),
+
+                    // ══════════════════════════════════════════
+                    // AZUL - SPRING_DATA_JPA
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Qué es el optimistic locking con @Version en JPA?",
+                        "@Version en un campo Long/Integer añade control de concurrencia optimista. JPA incluye WHERE version = N en los UPDATE y lo incrementa. Si dos transacciones leen la misma entidad y ambas intentan actualizar, la segunda lanza OptimisticLockException porque la versión ya cambió. Más eficiente que locks pesimistas para conflictos raros.",
+                        "SPRING_DATA_JPA", "AZUL"),
+                    new Flashcard(
+                        "¿Cómo se resuelve el problema N+1 en JPA?",
+                        "N+1 ocurre cuando cargas N entidades y JPA hace 1 query adicional por cada una para cargar sus relaciones lazy. Soluciones: @EntityGraph especifica qué relaciones cargar en un fetch específico. @BatchSize(size=20) carga relaciones en batches. JOIN FETCH en JPQL. @NamedEntityGraph para reutilizar. FetchType.EAGER es tentador pero crea otros problemas.",
+                        "SPRING_DATA_JPA", "AZUL"),
+                    new Flashcard(
+                        "¿Qué son las proyecciones en Spring Data JPA?",
+                        "Las proyecciones permiten retornar solo un subconjunto de campos en lugar de toda la entidad. Interface-based: una interfaz con getters para los campos deseados (Spring genera la implementación). Class-based (DTO): un DTO con constructor. Dynamic: retornar el tipo depende del parámetro genérico. Mejoran rendimiento evitando cargar campos innecesarios.",
+                        "SPRING_DATA_JPA", "AZUL"),
+
+                    // ══════════════════════════════════════════
+                    // AZUL - JAVA_CORE
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Qué es CompletableFuture en Java?",
+                        "CompletableFuture permite programación asíncrona y no bloqueante. CompletableFuture.supplyAsync(() -> fetchData()) ejecuta en otro hilo. .thenApply(data -> transform(data)) encadena transformaciones. .thenCombine() combina dos futuros. .exceptionally() maneja errores. Mejor que Future porque no bloquea con get() y permite composición funcional de operaciones async.",
+                        "JAVA_CORE", "AZUL"),
+                    new Flashcard(
+                        "¿Diferencia entre volatile y synchronized en Java?",
+                        "volatile garantiza visibilidad: todos los hilos ven el último valor escrito, sin cache en registros. No garantiza atomicidad. synchronized garantiza tanto visibilidad como atomicidad: solo un hilo a la vez ejecuta el bloque y los cambios son visibles al salir. volatile es más ligero, útil para flags simples. synchronized para operaciones compuestas como check-then-act.",
+                        "JAVA_CORE", "AZUL"),
+                    new Flashcard(
+                        "¿Qué es un ThreadPool y por qué usarlo?",
+                        "Un ThreadPool reutiliza un conjunto fijo de hilos en lugar de crear uno nuevo por cada tarea. Evita el overhead de crear/destruir hilos y limita el consumo de recursos. Executors.newFixedThreadPool(10) crea un pool de 10 hilos. newCachedThreadPool() crece según demanda. newSingleThreadExecutor() garantiza ejecución secuencial. Spring usa ThreadPool para @Async.",
+                        "JAVA_CORE", "AZUL"),
+                    new Flashcard(
+                        "¿Qué es el problema del diamante en Java?",
+                        "El problema del diamante surge cuando una clase hereda de dos fuentes que tienen el mismo método. Java no permite herencia múltiple de clases para evitarlo. Con interfaces Java 8+ (default methods) puede ocurrir: si dos interfaces tienen el mismo default method, la clase que las implementa debe sobrescribirlo para resolver la ambigüedad, o el compilador falla.",
+                        "JAVA_CORE", "AZUL"),
+
+                    // ══════════════════════════════════════════
+                    // AZUL - DOCKER_DEVOPS
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Qué es un Dockerfile multi-stage build?",
+                        "Multi-stage build usa múltiples FROM en un Dockerfile para separar etapas. La primera etapa compila (FROM maven:3.9 AS builder → mvn package). La segunda etapa usa solo el JAR resultante (FROM eclipse-temurin:17-jre → COPY --from=builder). La imagen final es mínima: no incluye Maven, código fuente ni dependencias de compilación.",
+                        "DOCKER_DEVOPS", "AZUL"),
+                    new Flashcard(
+                        "¿Cómo funcionan las redes en Docker Compose?",
+                        "Docker Compose crea automáticamente una red bridge para todos los servicios del mismo docker-compose.yml. Los servicios se comunican usando el nombre del servicio como hostname: el servicio app puede llamar a http://db:5432 donde db es el nombre del servicio PostgreSQL. Puedes crear redes personalizadas para aislar grupos de servicios o habilitar comunicación entre compose files.",
+                        "DOCKER_DEVOPS", "AZUL"),
+                    new Flashcard(
+                        "¿Qué etapas tiene un pipeline CI/CD típico?",
+                        "Pipeline típico: 1) Checkout del código. 2) Build (compilar, resolver dependencias). 3) Test unitarios e integración. 4) Análisis estático (SonarQube, checkstyle). 5) Build imagen Docker. 6) Push al registry. 7) Deploy a staging. 8) Tests de smoke/e2e. 9) Aprobación manual (opcional). 10) Deploy a producción. Cada etapa falla rápido si hay problemas.",
+                        "DOCKER_DEVOPS", "AZUL"),
+
+                    // ══════════════════════════════════════════
+                    // MARRON - MICROSERVICIOS
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Cómo funciona el patrón Saga en microservicios?",
+                        "Saga gestiona transacciones distribuidas como secuencia de transacciones locales. Coreografía: cada servicio publica eventos y reacciona a eventos de otros (descentralizado). Orquestación: un orquestador central dirige el flujo. Si un paso falla, se ejecutan transacciones compensatorias para deshacer los pasos anteriores. Eventualmente consistente, no ACID.",
+                        "MICROSERVICIOS", "MARRON"),
+                    new Flashcard(
+                        "¿Qué es la arquitectura event-driven en microservicios?",
+                        "En arquitectura event-driven los servicios se comunican publicando y consumiendo eventos asincrónicos (Kafka, RabbitMQ). El productor publica un evento y no espera respuesta. Los consumidores reaccionan de forma independiente. Ventajas: desacoplamiento temporal, resiliencia, escalabilidad. Desventajas: debugging complejo, consistencia eventual, necesidad de idempotencia.",
+                        "MICROSERVICIOS", "MARRON"),
+                    new Flashcard(
+                        "¿Cómo manejar transacciones distribuidas en microservicios?",
+                        "Las transacciones ACID distribuidas (2PC) crean acoplamiento y son difíciles de escalar. Alternativas: Saga (compensaciones), Outbox Pattern (guardar evento en misma BD que los datos antes de publicar), Event Sourcing (el estado como secuencia de eventos). La clave es diseñar operaciones idempotentes y aceptar consistencia eventual.",
+                        "MICROSERVICIOS", "MARRON"),
+
+                    // ══════════════════════════════════════════
+                    // MARRON - PATRONES_DISENO
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Qué es el patrón Decorator?",
+                        "Decorator añade responsabilidades a un objeto dinámicamente sin modificar su clase, usando composición en lugar de herencia. Envuelve el objeto original implementando la misma interfaz y delegando más comportamiento. Ejemplo clásico: java.io.BufferedReader envuelve FileReader añadiendo buffering. Permite combinar comportamientos de forma flexible.",
+                        "PATRONES_DISENO", "MARRON"),
+                    new Flashcard(
+                        "¿Qué es el patrón Template Method?",
+                        "Template Method define el esqueleto de un algoritmo en una clase base, dejando algunos pasos para que las subclases los implementen. La clase base tiene el método template con el flujo general y métodos abstractos (hooks) que las subclases concretan. Ejemplo: proceso de exportación con pasos fijos pero formatos diferentes (CSV, PDF, Excel).",
+                        "PATRONES_DISENO", "MARRON"),
+                    new Flashcard(
+                        "¿Qué es el patrón Proxy?",
+                        "Proxy proporciona un sustituto que controla el acceso al objeto real. Tipos: Virtual Proxy (carga lazy del objeto costoso), Protection Proxy (control de acceso), Remote Proxy (representa objeto en otro proceso/servidor), Caching Proxy (cachea resultados). Spring AOP usa proxies extensamente para @Transactional, @Cacheable, aspectos. JDK Proxy y CGLIB son las implementaciones.",
+                        "PATRONES_DISENO", "MARRON"),
+                    new Flashcard(
+                        "¿Cuáles son los principios SOLID y por qué importan?",
+                        "S: Single Responsibility (una clase, una razón para cambiar). O: Open/Closed (abierto para extensión, cerrado para modificación). L: Liskov Substitution (las subclases deben sustituir a sus padres). I: Interface Segregation (interfaces específicas mejor que una general). D: Dependency Inversion (depender de abstracciones, no implementaciones). SOLID produce código mantenible, testeable y extensible.",
+                        "PATRONES_DISENO", "MARRON"),
+
+                    // ══════════════════════════════════════════
+                    // MARRON - DOCKER_DEVOPS
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Cómo funciona GitHub Actions para CI/CD?",
+                        "GitHub Actions define workflows en .github/workflows/*.yml. Un workflow tiene triggers (on: push, pull_request), jobs que corren en runners (ubuntu-latest) y steps (actions/checkout, setup-java, mvn test). Jobs pueden ser paralelos o secuenciales (needs: build). Secrets se almacenan en Settings → Secrets y se acceden como ${{ secrets.DOCKER_PASSWORD }}.",
+                        "DOCKER_DEVOPS", "MARRON"),
+                    new Flashcard(
+                        "¿Qué es Kubernetes y cuáles son sus conceptos básicos?",
+                        "Kubernetes (K8s) orquesta contenedores en producción. Pod: unidad mínima, uno o más contenedores. Deployment: gestiona réplicas y rolling updates. Service: expone pods con IP estable y load balancing. ConfigMap/Secret: configuración externa. Namespace: aislamiento lógico. kubectl apply -f deployment.yaml despliega. K8s maneja auto-healing, scaling y rolling deployments.",
+                        "DOCKER_DEVOPS", "MARRON"),
+                    new Flashcard(
+                        "¿Qué es la orquestación de contenedores?",
+                        "La orquestación gestiona el ciclo de vida de contenedores a escala: scheduling (en qué nodo corre cada contenedor), scaling (ajustar réplicas según carga), networking (comunicación entre servicios), storage (volúmenes persistentes), self-healing (reiniciar contenedores fallidos). Kubernetes es el estándar. Docker Swarm es más simple. AWS ECS/EKS son opciones gestionadas.",
+                        "DOCKER_DEVOPS", "MARRON"),
+
+                    // ══════════════════════════════════════════
+                    // MARRON - GIT
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Diferencia entre git rebase y git merge?",
+                        "merge crea un commit de fusión que preserva el historial completo de ambas ramas. rebase re-aplica los commits de tu rama sobre la rama destino, creando un historial lineal más limpio. Nunca hagas rebase de ramas públicas/compartidas (reescribe historial). Merge es más seguro, rebase produce historial más legible. Rebase interactivo (rebase -i) permite limpiar commits antes de merge.",
+                        "GIT", "MARRON"),
+                    new Flashcard(
+                        "¿Qué es git cherry-pick?",
+                        "cherry-pick aplica los cambios de un commit específico en la rama actual, sin fusionar toda la rama. git cherry-pick abc123 crea un nuevo commit con los mismos cambios. Útil para llevar un hotfix de main a una rama de release, o para rescatar un commit específico de una rama experimental. Puede generar conflictos si el contexto es diferente.",
+                        "GIT", "MARRON"),
+                    new Flashcard(
+                        "¿Qué es GitFlow y cuándo usarlo?",
+                        "GitFlow es un modelo de branching con ramas: main (producción), develop (integración), feature/* (nuevas funcionalidades), release/* (preparación de versión), hotfix/* (correcciones urgentes). Adecuado para proyectos con releases versionadas. Para desarrollo continuo (CD), trunk-based development (todos trabajan en main con feature flags) es más ágil.",
+                        "GIT", "MARRON"),
+                    new Flashcard(
+                        "¿Cómo resolver conflictos en Git?",
+                        "Un conflicto ocurre cuando dos ramas modifican la misma parte de un archivo. Git marca las zonas en conflicto con <<<<<<, ======= y >>>>>>. Debes editar manualmente eligiendo qué cambios conservar, luego git add el archivo y git commit para completar el merge. Herramientas como VS Code, IntelliJ o git mergetool facilitan la resolución visual.",
+                        "GIT", "MARRON"),
+
+                    // ══════════════════════════════════════════
+                    // MARRON - SQL_DB
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Qué son las window functions en SQL?",
+                        "Las window functions calculan valores sobre un conjunto de filas relacionadas con la actual, sin colapsar filas como GROUP BY. ROW_NUMBER() OVER (PARTITION BY dept ORDER BY salary DESC) numera empleados por departamento. RANK(), DENSE_RANK() para rankings. LAG()/LEAD() para valores de filas anteriores/siguientes. SUM() OVER () para totales acumulados.",
+                        "SQL_DB", "MARRON"),
+                    new Flashcard(
+                        "¿Qué son los niveles de aislamiento de transacciones?",
+                        "READ UNCOMMITTED: lee datos no confirmados (dirty reads). READ COMMITTED (default PostgreSQL): solo lee datos confirmados. REPEATABLE READ: garantiza que releer la misma fila da el mismo resultado. SERIALIZABLE: máximo aislamiento, como si las transacciones fueran secuenciales. Mayor aislamiento = mayor consistencia pero menor rendimiento y más contención de locks.",
+                        "SQL_DB", "MARRON"),
+                    new Flashcard(
+                        "¿Qué son las materialized views?",
+                        "Una materialized view almacena físicamente el resultado de una consulta, a diferencia de las views normales que ejecutan la query cada vez. Mejoran enormemente el rendimiento de consultas analíticas complejas. Se refrescan manualmente (REFRESH MATERIALIZED VIEW) o automáticamente según la BD. Útiles para reportes y dashboards donde la consistencia exacta en tiempo real no es crítica.",
+                        "SQL_DB", "MARRON"),
+
+                    // ══════════════════════════════════════════
+                    // NEGRO - JAVA_CORE (JVM internals)
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Cómo funciona la memoria de la JVM (heap, stack, generaciones)?",
+                        "Stack: almacena frames de métodos y variables locales, uno por hilo. Heap: almacena objetos, compartido entre hilos. El heap se divide en Young Generation (Eden + Survivor spaces, objetos nuevos), Old Generation (objetos de larga vida) y Metaspace (metadata de clases). El GC recolecta Young Gen frecuentemente (Minor GC) y Old Gen ocasionalmente (Major/Full GC).",
+                        "JAVA_CORE", "NEGRO"),
+                    new Flashcard(
+                        "¿Qué es el class loading en Java?",
+                        "El ClassLoader carga clases dinámicamente cuando se referencian por primera vez. Jerarquía: Bootstrap ClassLoader (rt.jar/JDK core), Extension/Platform ClassLoader, Application ClassLoader (classpath de la app). Delegation model: primero delega al padre. La clase se carga solo una vez por ClassLoader. Permite hot-reload en frameworks y plugins con ClassLoaders personalizados.",
+                        "JAVA_CORE", "NEGRO"),
+                    new Flashcard(
+                        "¿Qué es la reflexión (reflection) en Java y cuándo usarla?",
+                        "Reflection permite inspeccionar y manipular clases, métodos y campos en runtime, independientemente del tipo en compilación. Class.forName(\"com.Foo\"), clazz.getDeclaredMethods(), method.invoke(obj, args). Usado por frameworks (Spring IoC, JUnit, Hibernate). Es poderoso pero costoso en rendimiento y rompe encapsulación. Evitar en código de negocio, preferir para frameworks/librerías.",
+                        "JAVA_CORE", "NEGRO"),
+
+                    // ══════════════════════════════════════════
+                    // NEGRO - SPRING_BOOT (auto-configuration)
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Cómo crear una auto-configuración personalizada en Spring Boot?",
+                        "Crea una clase @Configuration con @ConditionalOnClass, @ConditionalOnMissingBean, etc. Regístrala en src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports (Spring Boot 3) o spring.factories (Boot 2). Spring Boot la carga automáticamente si el jar está en classpath. Así funcionan todos los starters de Spring Boot.",
+                        "SPRING_BOOT", "NEGRO"),
+                    new Flashcard(
+                        "¿Qué es spring.factories y cómo funciona?",
+                        "spring.factories (Spring Boot 2) / AutoConfiguration.imports (Boot 3) es el mecanismo de Service Loader de Spring. Registra implementaciones de interfaces clave: EnableAutoConfiguration, ApplicationListener, BeanFactoryPostProcessor. Spring Boot escanea todos los jars en classpath buscando este archivo. Permite a librerías de terceros integrarse automáticamente sin configuración explícita del usuario.",
+                        "SPRING_BOOT", "NEGRO"),
+
+                    // ══════════════════════════════════════════
+                    // NEGRO - AVANZADO (Reactive, Event Sourcing, DDD)
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Qué son los Reactive Streams y Project Reactor?",
+                        "Reactive Streams es una especificación para streams asincrónicos no bloqueantes con backpressure. Project Reactor implementa esta spec con Mono<T> (0 o 1 elemento) y Flux<T> (0 a N elementos). Spring WebFlux usa Reactor para APIs reactivas. Backpressure permite al consumidor señalar al productor que va lento, evitando desbordamiento de buffers.",
+                        "AVANZADO", "NEGRO"),
+                    new Flashcard(
+                        "¿Qué es Event Sourcing?",
+                        "Event Sourcing almacena el estado de la aplicación como secuencia inmutable de eventos en lugar del estado actual. Para reconstruir el estado actual se reproducen todos los eventos desde el inicio. Ventajas: historial completo de cambios, auditoría perfecta, posibilidad de time-travel. Complejidad: event schema evolution, proyecciones para queries eficientes (CQRS suele combinarse).",
+                        "AVANZADO", "NEGRO"),
+                    new Flashcard(
+                        "¿Qué es la arquitectura hexagonal (Ports and Adapters)?",
+                        "La arquitectura hexagonal aísla la lógica de negocio (dominio) de los detalles técnicos. El dominio define puertos (interfaces): puertos de entrada (casos de uso) y puertos de salida (repositorios, servicios externos). Los adaptadores implementan estos puertos: REST controllers adaptan HTTP al caso de uso, JpaRepository adapta JPA al repositorio. Facilita testing y cambio de tecnología.",
+                        "AVANZADO", "NEGRO"),
+                    new Flashcard(
+                        "¿Qué es DDD (Domain-Driven Design)?",
+                        "DDD es un enfoque de diseño que centra el modelo de software en el dominio del negocio. Conceptos clave: Ubiquitous Language (vocabulario compartido entre técnicos y negocio), Bounded Context (límites explícitos del modelo), Aggregate (grupo de entidades con consistencia transaccional), Value Object (inmutable, sin identidad), Domain Events, Repository pattern.",
+                        "AVANZADO", "NEGRO"),
+
+                    // ══════════════════════════════════════════
+                    // NEGRO - TESTING
+                    // ══════════════════════════════════════════
+                    new Flashcard(
+                        "¿Cómo se usan Testcontainers en profundidad?",
+                        "Testcontainers arranca contenedores Docker reales en tests. @Testcontainers + @Container PostgreSQLContainer db = new PostgreSQLContainer(\"postgres:15\") inicia un Postgres real. Con @DynamicPropertySource se registran las propiedades del contenedor (URL, usuario) en el contexto Spring. Soporta Kafka, Redis, MongoDB y cualquier imagen Docker. Más lento que mocks pero mucho más fiel a producción.",
+                        "TESTING", "NEGRO"),
+                    new Flashcard(
+                        "¿Qué es mutation testing?",
+                        "Mutation testing evalúa la calidad de los tests introduciendo pequeñas mutaciones (cambios) en el código (cambiar > por >=, eliminar una condición) y verificando que los tests fallen. Si un test no detecta la mutación es un test débil. PIT Mutation Testing es la herramienta estándar para Java. Un mutation score alto indica tests robustos que detectan regresiones.",
+                        "TESTING", "NEGRO"),
+                    new Flashcard(
+                        "¿Qué es el contract testing y cuándo usarlo?",
+                        "Contract testing verifica que productor y consumidor de una API cumplen el contrato acordado. Pact es la herramienta más popular: el consumidor define expectativas (pact), el productor las verifica contra su implementación real. Ideal en microservicios para detectar breaking changes sin tests de integración full. Más rápido y estable que tests end-to-end.",
+                        "TESTING", "NEGRO")
                 ));
             }
         };
