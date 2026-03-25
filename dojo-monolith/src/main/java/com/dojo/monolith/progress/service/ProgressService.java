@@ -9,7 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ProgressService {
@@ -76,5 +77,36 @@ public class ProgressService {
 
     public BeltProgress getBeltProgressForLevel(String username, String beltLevel) {
         return beltProgressRepository.findByUserIdAndBeltLevel(username, beltLevel).orElse(null);
+    }
+
+    public List<UserProgress> getRankingGlobal() {
+        return userProgressRepository.findAll().stream()
+                .sorted(Comparator.comparingInt(UserProgress::getTotalCorrect).reversed())
+                .limit(50)
+                .collect(Collectors.toList());
+    }
+
+    public List<UserProgress> getRankingStreak() {
+        return userProgressRepository.findAll().stream()
+                .sorted(Comparator.comparingInt(UserProgress::getBestStreak).reversed())
+                .limit(50)
+                .collect(Collectors.toList());
+    }
+
+    public List<Map<String, Object>> getRankingBelts() {
+        return beltProgressRepository.findAll().stream()
+                .filter(BeltProgress::isMastered)
+                .collect(Collectors.groupingBy(BeltProgress::getUserId))
+                .entrySet().stream()
+                .map(e -> {
+                    Map<String, Object> m = new HashMap<>();
+                    m.put("username", e.getKey());
+                    m.put("masteredBelts", e.getValue().size());
+                    m.put("belts", e.getValue().stream().map(BeltProgress::getBeltLevel).collect(Collectors.toList()));
+                    return m;
+                })
+                .sorted((a, b) -> Integer.compare((int) b.get("masteredBelts"), (int) a.get("masteredBelts")))
+                .limit(50)
+                .collect(Collectors.toList());
     }
 }

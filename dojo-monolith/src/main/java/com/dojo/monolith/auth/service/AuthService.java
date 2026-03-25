@@ -3,20 +3,32 @@ package com.dojo.monolith.auth.service;
 import com.dojo.monolith.auth.dto.AuthResponse;
 import com.dojo.monolith.auth.dto.LoginRequest;
 import com.dojo.monolith.auth.dto.RegisterRequest;
+import com.dojo.monolith.auth.entity.RefreshToken;
 import com.dojo.monolith.auth.entity.User;
+import com.dojo.monolith.auth.repository.RefreshTokenRepository;
 import com.dojo.monolith.auth.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 
 @Service
 public class AuthService {
 
     private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
+    public AuthService(UserRepository userRepository,
+                       RefreshTokenRepository refreshTokenRepository,
+                       PasswordEncoder passwordEncoder,
+                       JwtService jwtService) {
         this.userRepository = userRepository;
+        this.refreshTokenRepository = refreshTokenRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
     }
@@ -37,8 +49,7 @@ public class AuthService {
         );
         userRepository.save(user);
 
-        String token = jwtService.generateToken(user.getUsername(), user.getRole());
-        return new AuthResponse(token, user.getUsername(), user.getRole());
+        return buildAuthResponse(user);
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -49,7 +60,40 @@ public class AuthService {
             throw new IllegalArgumentException("Invalid credentials");
         }
 
-        String token = jwtService.generateToken(user.getUsername(), user.getRole());
-        return new AuthResponse(token, user.getUsername(), user.getRole());
+        return buildAuthResponse(user);
+    }
+
+    @Transactional
+    public AuthResponse refresh(String refreshTokenValue) {
+        RefreshToken refreshToken = refreshTokenRepository.findByToken(refreshTokenValue)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid refresh token"));
+
+        if (refreshToken.isExpired()) {
+            refreshTokenRepository.delete(refreshToken);
+            throw new IllegalArgumentException("Refresh token expired");
+        }
+
+        User user = userRepository.findByUsername(refreshToken.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        refreshTokenRepository.delete(refreshToken);
+        return buildAuthResponse(user);
+    }
+
+    @Transactional
+    public void logout(String refreshTokenValue) {
+        refreshTokenRepository.findByToken(refreshTokenValue)
+                .ifPresent(refreshTokenRepository::delete);
+    }
+
+    @Transactional
+    private AuthResponse buildAuthResponse(User user) {
+        String accessToken = jwtService.generateToken(user.getUsername(), user.getRole());
+        String refreshToken = UUID.randomUUID().toString();
+        refreshTokenRepository.save(new RefreshToken(
+                refreshToken, user.getUsername(),
+                Instant.now().plus(7, ChronoUnit.DAYS)
+        ));
+        return new AuthResponse(accessToken, refreshToken, user.getUsername(), user.getRole());
     }
 }

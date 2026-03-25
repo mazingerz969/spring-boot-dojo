@@ -13,13 +13,12 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    private final SecretKey key;
-    private final long expiration;
+    private static final long ACCESS_TOKEN_MS = 15 * 60 * 1000;  // 15 minutes
 
-    public JwtService(@Value("${jwt.secret}") String secret,
-                      @Value("${jwt.expiration}") long expiration) {
+    private final SecretKey key;
+
+    public JwtService(@Value("${jwt.secret}") String secret) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        this.expiration = expiration;
     }
 
     public String generateToken(String username, String role) {
@@ -27,7 +26,7 @@ public class JwtService {
                 .subject(username)
                 .claim("role", role)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .expiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_MS))
                 .signWith(key)
                 .compact();
     }

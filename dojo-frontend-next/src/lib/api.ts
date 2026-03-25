@@ -1,4 +1,5 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+const STORAGE_KEY = "dojo-user";
 
 interface RequestOptions {
   method?: string;
@@ -17,11 +18,27 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const res = await fetch(`${API_URL}${endpoint}`, {
+  let res = await fetch(`${API_URL}${endpoint}`, {
     method,
     headers,
     body: body ? JSON.stringify(body) : undefined,
   });
+
+  if (res.status === 401 && token) {
+    const newToken = await tryRefreshToken();
+    if (newToken) {
+      headers["Authorization"] = `Bearer ${newToken}`;
+      res = await fetch(`${API_URL}${endpoint}`, {
+        method,
+        headers,
+        body: body ? JSON.stringify(body) : undefined,
+      });
+    } else {
+      localStorage.removeItem(STORAGE_KEY);
+      window.location.href = "/";
+      throw new Error("Sesión expirada");
+    }
+  }
 
   if (!res.ok) {
     const error = await res.text().catch(() => "Request failed");
@@ -31,18 +48,51 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
   return res.json();
 }
 
+async function tryRefreshToken(): Promise<string | null> {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (!stored) return null;
+
+    const user = JSON.parse(stored);
+    if (!user.refreshToken) return null;
+
+    const res = await fetch(`${API_URL}/api/auth/refresh`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refreshToken: user.refreshToken }),
+    });
+
+    if (!res.ok) return null;
+
+    const data = await res.json();
+    const updated = { ...user, token: data.token, refreshToken: data.refreshToken };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+
+    window.dispatchEvent(new CustomEvent("dojo-token-refreshed", { detail: updated }));
+    return data.token;
+  } catch {
+    return null;
+  }
+}
+
 // Auth
 export const auth = {
   login: (username: string, password: string) =>
-    request<{ token: string; username: string; role: string }>("/api/auth/login", {
+    request<{ token: string; refreshToken: string; username: string; role: string }>("/api/auth/login", {
       method: "POST",
       body: { username, password },
     }),
 
   register: (username: string, email: string, password: string) =>
-    request<{ token: string; username: string; role: string }>("/api/auth/register", {
+    request<{ token: string; refreshToken: string; username: string; role: string }>("/api/auth/register", {
       method: "POST",
       body: { username, email, password },
+    }),
+
+  logout: (refreshToken: string) =>
+    request<void>("/api/auth/logout", {
+      method: "POST",
+      body: { refreshToken },
     }),
 };
 

@@ -47,4 +47,19 @@ public class ProgressController {
         if (bp == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(bp);
     }
+
+    @GetMapping("/ranking/global")
+    public ResponseEntity<List<UserProgress>> rankingGlobal() {
+        return ResponseEntity.ok(progressService.getRankingGlobal());
+    }
+
+    @GetMapping("/ranking/streak")
+    public ResponseEntity<List<UserProgress>> rankingStreak() {
+        return ResponseEntity.ok(progressService.getRankingStreak());
+    }
+
+    @GetMapping("/ranking/belts")
+    public ResponseEntity<List<Map<String, Object>>> rankingBelts() {
+        return ResponseEntity.ok(progressService.getRankingBelts());
+    }
 }
