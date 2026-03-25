@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/lib/auth-context";
 import { content, progress as progressApi } from "@/lib/api";
 import { getBeltByDifficulty } from "@/lib/belts";
-import Navbar from "@/components/ui/Navbar";
+
 import { Eye, Check, X, ArrowLeft } from "@phosphor-icons/react";
 import Link from "next/link";
 import { hoverButton } from "@/lib/animations";
@@ -51,8 +51,8 @@ export default function StudyPage() {
 
   return (
     <div className="min-h-[100dvh]" style={{ background: "#0c0c0f" }}>
-      <Navbar />
-      <main className="max-w-xl mx-auto px-6 pb-20" style={{ paddingTop: "120px" }}>
+
+      <main className="page-main max-w-xl mx-auto">
         <Link href="/dashboard" className="inline-flex items-center gap-1 mb-6" style={{ fontSize: "14px", color: "#71717a", textDecoration: "none" }}>
           <ArrowLeft size={14} /> Dashboard
         </Link>

@@ -19,3 +19,14 @@
 **/*.bak
 **/node_modules/
 dojo-frontend-next/.next/
+
+# Environment files (secrets)
+.env
+.env.*
+**/.env
+**/.env.*
+!**/.env.example
+
+# Database files
+**/data/
+**/*.db

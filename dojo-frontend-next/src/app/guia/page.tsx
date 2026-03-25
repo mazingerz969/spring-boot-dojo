@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/lib/auth-context";
-import Navbar from "@/components/ui/Navbar";
+
 import { ArrowLeft, ArrowRight, GearSix, FolderOpen, MagnifyingGlass, Key, Globe, Layout, Browsers, ChartBar, Cards, Question, TrendUp, Brain, BracketsCurly, CodeBlock, Cube, Buildings } from "@phosphor-icons/react";
 import { fadeUp, staggerContainer, staggerItem, hoverButton } from "@/lib/animations";
 import { guiaContent } from "@/lib/guia-content";
@@ -29,11 +29,14 @@ const chapters = [
 ];
 
 export default function GuiaPage() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, hydrated } = useAuth();
   const router = useRouter();
   const [active, setActive] = useState(1);
 
-  useEffect(() => { if (!isAuthenticated) router.push("/"); }, [isAuthenticated, router]);
+  useEffect(() => {
+    if (!hydrated) return;
+    if (!isAuthenticated) router.push("/");
+  }, [hydrated, isAuthenticated, router]);
   if (!isAuthenticated) return null;
 
   const ch = chapters.find((c) => c.id === active);
@@ -41,8 +44,8 @@ export default function GuiaPage() {
 
   return (
     <div className="min-h-[100dvh]" style={{ background: "#0c0c0f" }}>
-      <Navbar />
-      <main className="max-w-[1400px] mx-auto px-6 sm:px-10 pb-20" style={{ paddingTop: "120px" }}>
+
+      <main className="page-main max-w-[1400px] mx-auto">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

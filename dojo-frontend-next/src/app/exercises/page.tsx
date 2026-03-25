@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/lib/auth-context";
 import { exercises as exercisesApi } from "@/lib/api";
 import { BELTS, getBeltByDifficulty } from "@/lib/belts";
-import Navbar from "@/components/ui/Navbar";
+
 import Link from "next/link";
 import { ArrowUpRight } from "@phosphor-icons/react";
 import {
@@ -45,15 +45,15 @@ export default function ExercisesPage() {
 
   return (
     <div className="min-h-[100dvh]" style={{ background: "#0c0c0f" }}>
-      <Navbar />
-      <main className="max-w-[1400px] mx-auto px-6 sm:px-10 pb-20" style={{ paddingTop: "120px" }}>
+
+      <main className="page-main max-w-[1400px] mx-auto">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
           style={{
             position: "relative",
-            height: "200px",
+            height: "160px",
             borderRadius: "20px",
             overflow: "hidden",
             marginBottom: "40px",
@@ -183,7 +183,7 @@ export default function ExercisesPage() {
                         style={{
                           position: "relative",
                           overflow: "hidden",
-                          padding: "16px 24px",
+                          padding: "14px 16px",
                           background: isHovered ? `linear-gradient(90deg, ${b?.color}08, transparent)` : "#141418",
                           borderRadius: "16px",
                           border: "1px solid rgba(255,255,255,0.06)",

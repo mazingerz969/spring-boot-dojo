@@ -6,7 +6,7 @@ import { motion, AnimatePresence, useAnimation } from "framer-motion";
 import { useAuth } from "@/lib/auth-context";
 import { exercises as exercisesApi } from "@/lib/api";
 import { getBeltByDifficulty } from "@/lib/belts";
-import Navbar from "@/components/ui/Navbar";
+
 import { ArrowLeft, Play, Lightbulb, Eye } from "@phosphor-icons/react";
 import Link from "next/link";
 import confetti from "canvas-confetti";
@@ -58,8 +58,8 @@ export default function ExerciseDetailPage() {
 
   return (
     <div className="min-h-[100dvh]" style={{ background: "#0c0c0f" }}>
-      <Navbar />
-      <main className="max-w-3xl mx-auto px-6 pb-20" style={{ paddingTop: "120px" }}>
+
+      <main className="page-main max-w-3xl mx-auto">
         <Link href="/exercises" className="inline-flex items-center gap-1 mb-6" style={{ fontSize: "14px", color: "#71717a", textDecoration: "none" }}>
           <ArrowLeft size={14} /> Ejercicios
         </Link>
@@ -132,14 +132,14 @@ export default function ExerciseDetailPage() {
 
         <AnimatePresence>
           {showHint && exercise.hint && (
-            <motion.div initial={{ opacity: 0, height: 0, y: -8 }} animate={{ opacity: 1, height: "auto", y: 0 }} exit={{ opacity: 0, height: 0, y: -8 }}
+            <motion.div key="hint" initial={{ opacity: 0, height: 0, y: -8 }} animate={{ opacity: 1, height: "auto", y: 0 }} exit={{ opacity: 0, height: 0, y: -8 }}
               transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
               style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.2)", borderRadius: "12px", padding: "16px", marginBottom: "16px" }}>
               <p style={{ fontSize: "14px", color: "#fbbf24" }}>{exercise.hint}</p>
             </motion.div>
           )}
           {showSolution && exercise.solution && (
-            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
+            <motion.div key="solution" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
               style={{ background: "#141418", borderRadius: "12px", overflow: "hidden", marginBottom: "16px", border: "1px solid rgba(255,255,255,0.06)" }}>
               <pre style={{ padding: "16px", fontSize: "14px", color: "#34d399", fontFamily: "var(--font-mono), monospace", overflowX: "auto" }}>{exercise.solution}</pre>
@@ -147,6 +147,7 @@ export default function ExerciseDetailPage() {
           )}
           {result && (
             <motion.div
+              key="result"
               animate={resultControls}
               initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}

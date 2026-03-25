@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/lib/auth-context";
 import { progress as progressApi } from "@/lib/api";
-import Navbar from "@/components/ui/Navbar";
+
 import { Star, Fire, Medal, Crown } from "@phosphor-icons/react";
 import { staggerContainer, staggerItem, hoverButton, viewportOnce } from "@/lib/animations";
 
@@ -50,15 +50,15 @@ export default function RankingPage() {
 
   return (
     <div className="min-h-[100dvh]" style={{ background: "#0c0c0f" }}>
-      <Navbar />
-      <main className="max-w-xl mx-auto px-6 pb-20" style={{ paddingTop: "120px" }}>
+
+      <main className="page-main max-w-xl mx-auto">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
           style={{
             position: "relative",
-            height: "200px",
+            height: "160px",
             borderRadius: "20px",
             overflow: "hidden",
             marginBottom: "40px",

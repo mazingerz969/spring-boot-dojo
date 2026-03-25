@@ -53,14 +53,14 @@ export default function HomePage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="relative z-10 w-full max-w-[440px] mx-6 text-center"
+        className="relative z-10 w-full max-w-[440px] mx-4 sm:mx-6 text-center"
         style={{
           background: "rgba(10, 10, 14, 0.6)",
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
           border: "1px solid rgba(255,255,255,0.08)",
           borderRadius: 24,
-          padding: "48px 40px",
+          padding: "36px 24px",
           boxShadow: "0 32px 64px rgba(0,0,0,0.5)",
         }}
       >

@@ -6,7 +6,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useAuth } from "@/lib/auth-context";
 import { progress } from "@/lib/api";
 import { BELTS } from "@/lib/belts";
-import Navbar from "@/components/ui/Navbar";
+
 import Link from "next/link";
 import { Fire, Trophy, CheckCircle, Target, Lock, Star } from "@phosphor-icons/react";
 import {
@@ -31,7 +31,7 @@ const cardStyle: React.CSSProperties = {
   background: "#141418",
   border: "1px solid rgba(255,255,255,0.06)",
   borderRadius: "16px",
-  padding: "24px",
+  padding: "20px",
 };
 
 const woodTextureOverlay: React.CSSProperties = {
@@ -76,14 +76,15 @@ export default function DashboardPage() {
 
   return (
     <div style={{ minHeight: "100dvh", background: "#0c0c0f" }}>
-      <Navbar />
-      <main style={{ maxWidth: "1200px", margin: "0 auto", padding: "120px 24px 80px" }}>
+
+      <main className="page-main" style={{ maxWidth: "1200px", margin: "0 auto" }}>
         {/* Stats with stagger + hover */}
         <motion.div
           variants={staggerContainer(0.08, 0.2)}
           initial="hidden"
           animate="visible"
-          style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "12px", marginBottom: "64px" }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-3"
+          style={{ marginBottom: "48px" }}
         >
           {metrics.map((m) => {
             const Icon = m.icon;
@@ -96,11 +97,11 @@ export default function DashboardPage() {
               >
                 <div style={woodTextureOverlay} />
                 <div style={{ position: "relative", zIndex: 1 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "16px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "12px" }}>
                     <Icon size={16} weight="fill" color={m.color} />
                     <span style={{ fontSize: "11px", color: "#71717a", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 600 }}>{m.label}</span>
                   </div>
-                  <p style={{ fontSize: "32px", fontWeight: 800, color: "#fafafa", fontFamily: "var(--font-mono), monospace", letterSpacing: "-0.02em" }}>
+                  <p style={{ fontSize: "30px", fontWeight: 800, color: "#fafafa", fontFamily: "var(--font-mono), monospace", letterSpacing: "-0.02em" }}>
                     {loading ? "..." : <>{m.value}<span style={{ fontSize: "16px", color: "#3f3f46", fontWeight: 500 }}>{m.suffix}</span></>}
                   </p>
                 </div>
@@ -127,7 +128,7 @@ export default function DashboardPage() {
           initial="hidden"
           whileInView="visible"
           viewport={viewportOnce}
-          style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "16px" }}
+          className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4"
         >
           {BELTS.map((belt, index) => {
             const beltPct = (stats.beltProgress as Record<string, number>)?.[belt.difficulty] ?? 0;
@@ -142,7 +143,7 @@ export default function DashboardPage() {
                 {...(isUnlocked ? hoverCard : {})}
                 style={{
                   position: "relative",
-                  minHeight: "240px",
+                  minHeight: "200px",
                   borderRadius: "16px",
                   border: "1px solid rgba(255,255,255,0.06)",
                   overflow: "hidden",
