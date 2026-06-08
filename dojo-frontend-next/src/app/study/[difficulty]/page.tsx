@@ -38,7 +38,10 @@ export default function StudyPage() {
 
   const handleAnswer = async (knew: boolean) => {
     try {
-      await progressApi.record({ userId: user!.username, type: "FLASHCARD", contentId: cards[current].id, correct: knew, difficulty }, user!.token);
+      await progressApi.record(
+        { username: user!.username, beltLevel: difficulty, correct: knew },
+        user!.token
+      );
     } catch {}
     setShowAnswer(false);
     if (current < cards.length - 1) setCurrent((p) => p + 1);

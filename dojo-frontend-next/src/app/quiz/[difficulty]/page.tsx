@@ -74,7 +74,12 @@ export default function QuizPage() {
       feedbackControls.start(shakeX);
       play("incorrect", 0.3);
     }
-    try { await progressApi.record({ userId: user!.username, type: "QUIZ", contentId: q.id, correct, difficulty }, user!.token); } catch {}
+    try {
+      await progressApi.record(
+        { username: user!.username, beltLevel: difficulty, correct },
+        user!.token
+      );
+    } catch {}
     setPhase("feedback");
   };
 

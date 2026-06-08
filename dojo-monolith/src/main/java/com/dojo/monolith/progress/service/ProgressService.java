@@ -1,16 +1,18 @@
 package com.dojo.monolith.progress.service;
 
 import com.dojo.monolith.progress.dto.AnswerRequest;
+import com.dojo.monolith.progress.dto.RankingEntryDto;
+import com.dojo.monolith.progress.dto.RankingResponse;
 import com.dojo.monolith.progress.entity.BeltProgress;
 import com.dojo.monolith.progress.entity.UserProgress;
 import com.dojo.monolith.progress.repository.BeltProgressRepository;
 import com.dojo.monolith.progress.repository.UserProgressRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ProgressService {
@@ -79,34 +81,83 @@ public class ProgressService {
         return beltProgressRepository.findByUserIdAndBeltLevel(username, beltLevel).orElse(null);
     }
 
-    public List<UserProgress> getRankingGlobal() {
-        return userProgressRepository.findAll().stream()
-                .sorted(Comparator.comparingInt(UserProgress::getTotalCorrect).reversed())
-                .limit(50)
-                .collect(Collectors.toList());
+    public RankingResponse getGlobalRanking(String currentUsername) {
+        List<UserProgress> top10 = userProgressRepository.findTop10ByOrderByTotalCorrectDesc();
+        List<RankingEntryDto> entries = new ArrayList<>();
+        boolean userInTop = false;
+
+        for (int i = 0; i < top10.size(); i++) {
+            UserProgress up = top10.get(i);
+            boolean isCurrent = up.getUserId().equals(currentUsername);
+            if (isCurrent) userInTop = true;
+            entries.add(new RankingEntryDto(i + 1, up.getUserId(), up.getTotalCorrect(), up.getTotalAttempted(), isCurrent));
+        }
+
+        RankingEntryDto currentUserEntry = null;
+        if (!userInTop && currentUsername != null && !currentUsername.isBlank()) {
+            UserProgress current = userProgressRepository.findByUserId(currentUsername).orElse(null);
+            if (current != null && current.getTotalAttempted() > 0) {
+                long rank = userProgressRepository.countByTotalCorrectGreaterThan(current.getTotalCorrect()) + 1;
+                currentUserEntry = new RankingEntryDto((int) rank, current.getUserId(), current.getTotalCorrect(), current.getTotalAttempted(), true);
+            }
+        }
+
+        return new RankingResponse("global", entries, currentUserEntry);
     }
 
-    public List<UserProgress> getRankingStreak() {
-        return userProgressRepository.findAll().stream()
-                .sorted(Comparator.comparingInt(UserProgress::getBestStreak).reversed())
-                .limit(50)
-                .collect(Collectors.toList());
+    public RankingResponse getStreakRanking(String currentUsername) {
+        List<UserProgress> top10 = userProgressRepository.findTop10ByOrderByBestStreakDesc();
+        List<RankingEntryDto> entries = new ArrayList<>();
+        boolean userInTop = false;
+
+        for (int i = 0; i < top10.size(); i++) {
+            UserProgress up = top10.get(i);
+            boolean isCurrent = up.getUserId().equals(currentUsername);
+            if (isCurrent) userInTop = true;
+            entries.add(new RankingEntryDto(i + 1, up.getUserId(), up.getBestStreak(), up.getTotalAttempted(), isCurrent));
+        }
+
+        RankingEntryDto currentUserEntry = null;
+        if (!userInTop && currentUsername != null && !currentUsername.isBlank()) {
+            UserProgress current = userProgressRepository.findByUserId(currentUsername).orElse(null);
+            if (current != null && current.getTotalAttempted() > 0) {
+                long rank = userProgressRepository.countByBestStreakGreaterThan(current.getBestStreak()) + 1;
+                currentUserEntry = new RankingEntryDto((int) rank, current.getUserId(), current.getBestStreak(), current.getTotalAttempted(), true);
+            }
+        }
+
+        return new RankingResponse("streak", entries, currentUserEntry);
     }
 
-    public List<Map<String, Object>> getRankingBelts() {
-        return beltProgressRepository.findAll().stream()
-                .filter(BeltProgress::isMastered)
-                .collect(Collectors.groupingBy(BeltProgress::getUserId))
-                .entrySet().stream()
-                .map(e -> {
-                    Map<String, Object> m = new HashMap<>();
-                    m.put("username", e.getKey());
-                    m.put("masteredBelts", e.getValue().size());
-                    m.put("belts", e.getValue().stream().map(BeltProgress::getBeltLevel).collect(Collectors.toList()));
-                    return m;
-                })
-                .sorted((a, b) -> Integer.compare((int) b.get("masteredBelts"), (int) a.get("masteredBelts")))
-                .limit(50)
-                .collect(Collectors.toList());
+    public RankingResponse getBeltsRanking(String currentUsername) {
+        List<Object[]> top10 = beltProgressRepository.findTopByMasteredBelts(PageRequest.of(0, 10));
+        List<RankingEntryDto> entries = new ArrayList<>();
+        boolean userInTop = false;
+
+        for (int i = 0; i < top10.size(); i++) {
+            Object[] row = top10.get(i);
+            String userId = (String) row[0];
+            int masteredCount = ((Long) row[1]).intValue();
+            boolean isCurrent = userId.equals(currentUsername);
+            if (isCurrent) userInTop = true;
+            entries.add(new RankingEntryDto(i + 1, userId, masteredCount, 0, isCurrent));
+        }
+
+        RankingEntryDto currentUserEntry = null;
+        if (!userInTop && currentUsername != null && !currentUsername.isBlank()) {
+            long myMastered = beltProgressRepository.countMasteredByUserId(currentUsername);
+            if (myMastered > 0) {
+                long rank = 1;
+                for (Object[] row : beltProgressRepository.findTopByMasteredBelts(PageRequest.of(0, Integer.MAX_VALUE))) {
+                    int count = ((Long) row[1]).intValue();
+                    if (count > myMastered) {
+                        rank++;
+                    }
+                }
+                currentUserEntry = new RankingEntryDto((int) rank, currentUsername, (int) myMastered, 0, true);
+            }
+        }
+
+        return new RankingResponse("belts", entries, currentUserEntry);
     }
 }

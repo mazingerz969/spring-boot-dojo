@@ -1,6 +1,7 @@
 package com.dojo.monolith.progress.controller;
 
 import com.dojo.monolith.progress.dto.AnswerRequest;
+import com.dojo.monolith.progress.dto.RankingResponse;
 import com.dojo.monolith.progress.entity.BeltProgress;
 import com.dojo.monolith.progress.entity.UserProgress;
 import com.dojo.monolith.progress.service.ProgressService;
@@ -49,17 +50,17 @@ public class ProgressController {
     }
 
     @GetMapping("/ranking/global")
-    public ResponseEntity<List<UserProgress>> rankingGlobal() {
-        return ResponseEntity.ok(progressService.getRankingGlobal());
+    public ResponseEntity<RankingResponse> rankingGlobal(@RequestParam(required = false) String username) {
+        return ResponseEntity.ok(progressService.getGlobalRanking(username != null ? username : ""));
     }
 
     @GetMapping("/ranking/streak")
-    public ResponseEntity<List<UserProgress>> rankingStreak() {
-        return ResponseEntity.ok(progressService.getRankingStreak());
+    public ResponseEntity<RankingResponse> rankingStreak(@RequestParam(required = false) String username) {
+        return ResponseEntity.ok(progressService.getStreakRanking(username != null ? username : ""));
     }
 
     @GetMapping("/ranking/belts")
-    public ResponseEntity<List<Map<String, Object>>> rankingBelts() {
-        return ResponseEntity.ok(progressService.getRankingBelts());
+    public ResponseEntity<RankingResponse> rankingBelts(@RequestParam(required = false) String username) {
+        return ResponseEntity.ok(progressService.getBeltsRanking(username != null ? username : ""));
     }
 }

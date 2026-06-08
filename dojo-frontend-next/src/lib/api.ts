@@ -45,7 +45,16 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
     throw new Error(error);
   }
 
-  return res.json();
+  if (res.status === 204) {
+    return undefined as T;
+  }
+
+  const text = await res.text();
+  if (!text) {
+    return undefined as T;
+  }
+
+  return JSON.parse(text) as T;
 }
 
 async function tryRefreshToken(): Promise<string | null> {
@@ -116,34 +125,177 @@ export const content = {
 };
 
 // Progress
+export interface UserProgressDto {
+  userId?: string;
+  totalCorrect?: number;
+  totalAttempted?: number;
+  currentStreak?: number;
+  bestStreak?: number;
+  lastStudyDate?: string;
+}
+
+export interface BeltProgressDto {
+  beltLevel?: string;
+  correctCount?: number;
+  attemptCount?: number;
+  mastered?: boolean;
+}
+
+export interface ProgressSummary {
+  currentStreak: number;
+  bestStreak: number;
+  totalCorrect: number;
+  accuracy: number;
+  beltProgress: Record<string, number>;
+  masteredBelts: string[];
+}
+
+export function mapProgressResponse(data: Record<string, unknown>): ProgressSummary {
+  const p = (data.progress ?? {}) as UserProgressDto;
+  const belts = (data.belts ?? []) as BeltProgressDto[];
+  const totalAttempted = p.totalAttempted ?? 0;
+  const totalCorrect = p.totalCorrect ?? 0;
+
+  const beltProgress: Record<string, number> = {};
+  const masteredBelts: string[] = [];
+  for (const belt of belts) {
+    if (!belt.beltLevel) continue;
+    const attempts = belt.attemptCount ?? 0;
+    beltProgress[belt.beltLevel] =
+      attempts > 0 ? Math.round(((belt.correctCount ?? 0) / attempts) * 100) : 0;
+    if (belt.mastered) masteredBelts.push(belt.beltLevel);
+  }
+
+  return {
+    currentStreak: p.currentStreak ?? 0,
+    bestStreak: p.bestStreak ?? 0,
+    totalCorrect,
+    accuracy: totalAttempted > 0 ? Math.round((totalCorrect / totalAttempted) * 100) : 0,
+    beltProgress,
+    masteredBelts,
+  };
+}
+
+export interface RankingEntry {
+  userId: string;
+  value: number;
+  rank?: number;
+}
+
+export interface RankingData {
+  top10: RankingEntry[];
+  userPosition?: number;
+  userValue?: number;
+}
+
+function mapRankingEntry(raw: Record<string, unknown>): RankingEntry {
+  return {
+    userId: String(raw.userId ?? raw.username ?? ""),
+    value: Number(raw.value ?? raw.totalCorrect ?? raw.bestStreak ?? raw.masteredBelts ?? 0),
+    rank: raw.rank != null ? Number(raw.rank) : undefined,
+  };
+}
+
+export function mapRankingResponse(data: unknown, mode: "global" | "streak" | "belts"): RankingData {
+  if (data && typeof data === "object" && !Array.isArray(data) && "top10" in data) {
+    const payload = data as Record<string, unknown>;
+    const top10 = ((payload.top10 as Array<Record<string, unknown>>) ?? []).map(mapRankingEntry);
+    const currentUser = payload.currentUser as Record<string, unknown> | null | undefined;
+    return {
+      top10,
+      userPosition: currentUser?.rank != null ? Number(currentUser.rank) : undefined,
+      userValue: currentUser?.value != null ? Number(currentUser.value) : undefined,
+    };
+  }
+
+  if (Array.isArray(data)) {
+    const top10 = data.slice(0, 10).map((item, index) => {
+      const row = item as Record<string, unknown>;
+      if (row.masteredBelts != null || row.belts != null) {
+        return {
+          userId: String(row.username ?? row.userId ?? ""),
+          value: Number(row.masteredBelts ?? 0),
+          rank: index + 1,
+        };
+      }
+      return {
+        userId: String(row.userId ?? row.username ?? ""),
+        value: mode === "streak"
+          ? Number(row.bestStreak ?? row.currentStreak ?? 0)
+          : Number(row.totalCorrect ?? 0),
+        rank: index + 1,
+      };
+    });
+    return { top10 };
+  }
+
+  return { top10: [] };
+}
+
 export const progress = {
   get: (username: string, token: string) =>
     request<Record<string, unknown>>(`/api/progress/${username}`, { token }),
 
-  record: (data: unknown, token: string) =>
-    request<Record<string, unknown>>("/api/progress/record", {
+  record: (data: { username: string; beltLevel: string; correct: boolean }, token: string) =>
+    request<void>("/api/progress/record", {
       method: "POST",
       body: data,
       token,
     }),
 
-  rankingGlobal: (token: string) =>
-    request<Record<string, unknown>>("/api/progress/ranking/global", { token }),
+  rankingGlobal: (username: string, token: string) =>
+    request<Record<string, unknown>>(
+      `/api/progress/ranking/global?username=${encodeURIComponent(username)}`,
+      { token }
+    ).then((data) => mapRankingResponse(data, "global")),
 
-  rankingStreak: (token: string) =>
-    request<Record<string, unknown>>("/api/progress/ranking/streak", { token }),
+  rankingStreak: (username: string, token: string) =>
+    request<Record<string, unknown>>(
+      `/api/progress/ranking/streak?username=${encodeURIComponent(username)}`,
+      { token }
+    ).then((data) => mapRankingResponse(data, "streak")),
 
-  rankingBelts: (token: string) =>
-    request<Record<string, unknown>>("/api/progress/ranking/belts", { token }),
+  rankingBelts: (username: string, token: string) =>
+    request<Record<string, unknown>>(
+      `/api/progress/ranking/belts?username=${encodeURIComponent(username)}`,
+      { token }
+    ).then((data) => mapRankingResponse(data, "belts")),
 };
 
 // Exercises
+export interface Exercise {
+  id: number;
+  title: string;
+  description: string;
+  belt: string;
+  difficulty: string;
+  starterCode: string;
+  hint?: string;
+  solution?: string;
+}
+
+export function mapExercise(raw: Record<string, unknown>): Exercise {
+  const belt = String(raw.belt ?? raw.difficulty ?? "");
+  return {
+    id: Number(raw.id),
+    title: String(raw.title ?? ""),
+    description: String(raw.description ?? ""),
+    belt,
+    difficulty: belt,
+    starterCode: String(raw.starterCode ?? ""),
+    hint: String(raw.hints ?? raw.hint ?? "") || undefined,
+    solution: String(raw.solution ?? "") || undefined,
+  };
+}
+
 export const exercises = {
   getAll: (token: string) =>
-    request<Array<Record<string, unknown>>>("/api/exercises", { token }),
+    request<Array<Record<string, unknown>>>("/api/exercises", { token }).then((data) =>
+      data.map(mapExercise)
+    ),
 
   getById: (id: number, token: string) =>
-    request<Record<string, unknown>>(`/api/exercises/${id}`, { token }),
+    request<Record<string, unknown>>(`/api/exercises/${id}`, { token }).then(mapExercise),
 
   validate: (id: number, code: string, token: string) =>
     request<Record<string, unknown>>(`/api/exercises/${id}/validate`, {

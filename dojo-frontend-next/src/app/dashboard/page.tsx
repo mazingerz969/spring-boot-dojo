@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useAuth } from "@/lib/auth-context";
-import { progress } from "@/lib/api";
+import { progress, mapProgressResponse, type ProgressSummary } from "@/lib/api";
 import { BELTS } from "@/lib/belts";
 
 import Link from "next/link";
@@ -16,14 +16,16 @@ import {
   letterContainer, letterVariant,
 } from "@/lib/animations";
 
-interface Stats {
-  currentStreak?: number;
-  bestStreak?: number;
-  totalCorrect?: number;
-  accuracy?: number;
-  beltProgress?: Record<string, number>;
-  masteredBelts?: string[];
-}
+type Stats = ProgressSummary;
+
+const emptyStats: Stats = {
+  currentStreak: 0,
+  bestStreak: 0,
+  totalCorrect: 0,
+  accuracy: 0,
+  beltProgress: {},
+  masteredBelts: [],
+};
 
 const cardStyle: React.CSSProperties = {
   position: "relative",
@@ -47,7 +49,7 @@ const woodTextureOverlay: React.CSSProperties = {
 export default function DashboardPage() {
   const { user, isAuthenticated, hydrated } = useAuth();
   const router = useRouter();
-  const [stats, setStats] = useState<Stats>({});
+  const [stats, setStats] = useState<Stats>(emptyStats);
   const [loading, setLoading] = useState(true);
   const { scrollYProgress } = useScroll();
   const headerY = useTransform(scrollYProgress, [0, 0.3], [0, -30]);
@@ -58,7 +60,7 @@ export default function DashboardPage() {
     if (!isAuthenticated) { router.push("/"); return; }
     progress
       .get(user!.username, user!.token)
-      .then((data) => setStats(data as Stats))
+      .then((data) => setStats(mapProgressResponse(data)))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, [hydrated, isAuthenticated, router, user]);

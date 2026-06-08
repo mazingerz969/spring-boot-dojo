@@ -942,8 +942,8 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
 
 jwt:
-  secret: dojo-secret-key-that-is-at-least-256-bits-long-for-hs256-algorithm-security
-  expiration: 86400000              # 24 horas en milisegundos</code></pre><p><b>Propiedades importantes:</b></p><ul><li><code>jdbc:h2:mem:authdb</code> — Base de datos <b>en memoria</b>. Los datos se pierden al reiniciar. Para persistir: <code>jdbc:h2:file:./data/authdb</code></li><li><code>ddl-auto: create-drop</code> — Hibernate crea las tablas automáticamente a partir de las entidades @Entity. En producción usarías <code>validate</code> + migraciones Flyway</li><li><code>show-sql: true</code> — Muy útil para depurar. Ves cada query que ejecuta JPA en la consola</li><li><code>jwt.secret</code> — La clave para firmar tokens. DEBE ser la misma en Auth Service y en el API Gateway. Mínimo 32 caracteres para HS256</li><li><code>86400000</code> — 24h × 60min × 60seg × 1000ms = 86.400.000 milisegundos</li></ul>`,
+  secret: \${JWT_SECRET}
+  expiration: 86400000              # 24 horas en milisegundos</code></pre><p><b>Propiedades importantes:</b></p><ul><li><code>jdbc:h2:mem:authdb</code> — Base de datos <b>en memoria</b>. Los datos se pierden al reiniciar. Para persistir: <code>jdbc:h2:file:./data/authdb</code></li><li><code>ddl-auto: create-drop</code> — Hibernate crea las tablas automáticamente a partir de las entidades @Entity. En producción usarías <code>validate</code> + migraciones Flyway</li><li><code>show-sql: true</code> — Muy útil para depurar. Ves cada query que ejecuta JPA en la consola</li><li><code>jwt.secret: \${JWT_SECRET}</code> — <b>Nunca</b> pegues un secret real en el YAML ni en Git. Genera uno con <code>openssl rand -base64 64</code> y expórtalo como variable de entorno (o en <code>.env</code> local, ignorado por Git). Debe ser la misma en Auth y Gateway</li><li><code>86400000</code> — 24h × 60min × 60seg × 1000ms = 86.400.000 milisegundos</li></ul><p>⚠️ <b>Seguridad:</b> La consola H2 y <code>ddl-auto: create-drop</code> son solo para desarrollo local. En producción usa PostgreSQL, desactiva H2 y no publiques contraseñas de BD ni JWT secrets.</p>`,
       },
       {
         title: `14. Arrancar y probar`,
@@ -1775,7 +1775,7 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
 
 jwt:
-  secret: dojo-secret-key-that-is-at-least-256-bits-long-for-hs256-algorithm-security</code></pre><p><b>Desglose de cada ruta:</b></p><table class='table table-sm table-dark'><thead><tr><th>Petición al Gateway</th><th>StripPrefix</th><th>Llega al servicio como</th><th>JWT</th></tr></thead><tbody><tr><td><code>/api/auth/login</code></td><td>1 (quita <code>/api</code>)</td><td><code>/auth/login</code></td><td>❌ No</td></tr><tr><td><code>/api/content/flashcards</code></td><td>2 (quita <code>/api/content</code>)</td><td><code>/flashcards</code></td><td>✅ Sí</td></tr><tr><td><code>/api/exercises/1</code></td><td>1 (quita <code>/api</code>)</td><td><code>/exercises/1</code></td><td>✅ Sí</td></tr><tr><td><code>/api/progress/berto</code></td><td>1 (quita <code>/api</code>)</td><td><code>/progress/berto</code></td><td>✅ Sí</td></tr></tbody></table><p><b>Conceptos clave:</b></p><ul><li><code>lb://auth-service</code> — <b>Load Balanced</b> via Eureka. El Gateway pregunta a Eureka la IP real del servicio</li><li><code>predicates</code> — Condiciones para que la ruta aplique. <code>Path=/api/auth/**</code> = cualquier URL que empiece por /api/auth/</li><li><code>StripPrefix=1</code> — Quita N segmentos del path antes de enviar al servicio. <code>/api/auth/login</code> con StripPrefix=1 → <code>/auth/login</code></li><li><code>JwtAuthFilter</code> — Nuestro filtro. Se referencia por el nombre de la clase (sin el sufijo "GatewayFilterFactory")</li></ul><p>📌 <b>La clave JWT DEBE ser la misma</b> que en auth-service. Si no, Auth genera tokens que el Gateway no puede validar.</p>`,
+  secret: \${JWT_SECRET}</code></pre><p><b>Desglose de cada ruta:</b></p><table class='table table-sm table-dark'><thead><tr><th>Petición al Gateway</th><th>StripPrefix</th><th>Llega al servicio como</th><th>JWT</th></tr></thead><tbody><tr><td><code>/api/auth/login</code></td><td>1 (quita <code>/api</code>)</td><td><code>/auth/login</code></td><td>❌ No</td></tr><tr><td><code>/api/content/flashcards</code></td><td>2 (quita <code>/api/content</code>)</td><td><code>/flashcards</code></td><td>✅ Sí</td></tr><tr><td><code>/api/exercises/1</code></td><td>1 (quita <code>/api</code>)</td><td><code>/exercises/1</code></td><td>✅ Sí</td></tr><tr><td><code>/api/progress/berto</code></td><td>1 (quita <code>/api</code>)</td><td><code>/progress/berto</code></td><td>✅ Sí</td></tr></tbody></table><p><b>Conceptos clave:</b></p><ul><li><code>lb://auth-service</code> — <b>Load Balanced</b> via Eureka. El Gateway pregunta a Eureka la IP real del servicio</li><li><code>predicates</code> — Condiciones para que la ruta aplique. <code>Path=/api/auth/**</code> = cualquier URL que empiece por /api/auth/</li><li><code>StripPrefix=1</code> — Quita N segmentos del path antes de enviar al servicio. <code>/api/auth/login</code> con StripPrefix=1 → <code>/auth/login</code></li><li><code>JwtAuthFilter</code> — Nuestro filtro. Se referencia por el nombre de la clase (sin el sufijo "GatewayFilterFactory")</li></ul><p>📌 <b>La clave JWT DEBE ser la misma</b> que en auth-service, leída desde <code>\${JWT_SECRET}</code>. Nunca copies un secret de ejemplo a producción ni lo subas al repositorio.</p>`,
       },
       {
         title: `8. Arrancar y probar`,
@@ -4013,6 +4013,7 @@ docker compose logs -f        # Ver logs en tiempo real</code></pre>`,
   environment:
     - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=
         http://eureka-server:8761/eureka/
+    - JWT_SECRET=\${JWT_SECRET}
     - SPRING_DATASOURCE_URL=jdbc:h2:mem:authdb
   depends_on:
     eureka-server:
@@ -4028,6 +4029,7 @@ docker compose logs -f        # Ver logs en tiempo real</code></pre>`,
   environment:
     - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=
         http://eureka-server:8761/eureka/
+    - JWT_SECRET=\${JWT_SECRET}
   depends_on:
     eureka-server:
       condition: service_started</code></pre><p>El Gateway descubre los servicios a través de Eureka y enruta automáticamente. El frontend habla con el Gateway (puerto 8080), nunca directamente con los microservicios.</p>`,

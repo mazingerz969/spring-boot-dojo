@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/lib/auth-context";
-import { exercises as exercisesApi } from "@/lib/api";
+import { exercises as exercisesApi, type Exercise } from "@/lib/api";
 import { BELTS, getBeltByDifficulty } from "@/lib/belts";
 
 import Link from "next/link";
@@ -13,8 +13,6 @@ import {
   staggerContainer, staggerItem,
   hoverCard, hoverButton, viewportOnce,
 } from "@/lib/animations";
-
-interface Exercise { id: number; title: string; description: string; difficulty: string; }
 
 const shimmerItem = {
   hidden: { opacity: 0 },
@@ -33,12 +31,14 @@ export default function ExercisesPage() {
     if (!hydrated) return;
     if (!isAuthenticated) { router.push("/"); return; }
     exercisesApi.getAll(user!.token)
-      .then((data) => setExerciseList(data as unknown as Exercise[]))
+      .then(setExerciseList)
       .catch(() => {})
       .finally(() => setLoading(false));
   }, [hydrated, isAuthenticated, router, user]);
 
-  const filtered = filter === "ALL" ? exerciseList : exerciseList.filter((e) => e.difficulty === filter);
+  const filtered = filter === "ALL"
+    ? exerciseList
+    : exerciseList.filter((e) => e.belt === filter || e.difficulty === filter);
 
   const activeFilterBelt = BELTS.find((b) => b.difficulty === filter);
   const activeFilterColor = activeFilterBelt?.color ?? "#0d9488";
@@ -170,7 +170,7 @@ export default function ExercisesPage() {
               style={{ display: "flex", flexDirection: "column", gap: "12px" }}
             >
               {filtered.map((ex) => {
-                const b = getBeltByDifficulty(ex.difficulty);
+                const b = getBeltByDifficulty(ex.belt || ex.difficulty);
                 const isHovered = hoveredId === ex.id;
                 return (
                   <motion.div key={ex.id} variants={staggerItem}>

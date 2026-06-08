@@ -652,7 +652,7 @@ public class GuiaCapitulo04 {
                         + "      defaultZone: http://localhost:8761/eureka/\n"
                         + "\n"
                         + "jwt:\n"
-                        + "  secret: dojo-secret-key-that-is-at-least-256-bits-long-for-hs256-algorithm-security\n"
+                        + "  secret: ${JWT_SECRET}\n"
                         + "  expiration: 86400000              # 24 horas en milisegundos</code></pre>"
                         + "<p><b>Propiedades importantes:</b></p>"
                         + "<ul>"
@@ -661,8 +661,8 @@ public class GuiaCapitulo04 {
                         + "<li><code>ddl-auto: create-drop</code> — Hibernate crea las tablas automáticamente a partir de las entidades @Entity. "
                         + "En producción usarías <code>validate</code> + migraciones Flyway</li>"
                         + "<li><code>show-sql: true</code> — Muy útil para depurar. Ves cada query que ejecuta JPA en la consola</li>"
-                        + "<li><code>jwt.secret</code> — La clave para firmar tokens. DEBE ser la misma en Auth Service y en el API Gateway. "
-                        + "Mínimo 32 caracteres para HS256</li>"
+                        + "<li><code>jwt.secret: ${JWT_SECRET}</code> — Variable de entorno. Nunca un secret fijo en Git. "
+                        + "Genera con <code>openssl rand -base64 64</code>. Debe coincidir en Auth y Gateway</li>"
                         + "<li><code>86400000</code> — 24h × 60min × 60seg × 1000ms = 86.400.000 milisegundos</li>"
                         + "</ul>"),
 

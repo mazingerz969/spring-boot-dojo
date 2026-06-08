@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { motion, AnimatePresence, useAnimation } from "framer-motion";
 import { useAuth } from "@/lib/auth-context";
-import { exercises as exercisesApi } from "@/lib/api";
+import { exercises as exercisesApi, type Exercise } from "@/lib/api";
 import { getBeltByDifficulty } from "@/lib/belts";
 
 import { ArrowLeft, Play, Lightbulb, Eye } from "@phosphor-icons/react";
@@ -12,7 +12,6 @@ import Link from "next/link";
 import confetti from "canvas-confetti";
 import { hoverButton, shakeX, fadeUp } from "@/lib/animations";
 
-interface Exercise { id: number; title: string; description: string; difficulty: string; starterCode: string; hint?: string; solution?: string; }
 interface ValidationResult { passed: boolean; message?: string; missingKeywords?: string[]; }
 
 export default function ExerciseDetailPage() {
@@ -32,7 +31,7 @@ export default function ExerciseDetailPage() {
     if (!hydrated) return;
     if (!isAuthenticated) { router.push("/"); return; }
     exercisesApi.getById(id, user!.token)
-      .then((data) => { const ex = data as unknown as Exercise; setExercise(ex); setCode(ex.starterCode || ""); })
+      .then((ex) => { setExercise(ex); setCode(ex.starterCode || ""); })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, [hydrated, isAuthenticated, router, id, user]);
@@ -54,7 +53,7 @@ export default function ExerciseDetailPage() {
   };
 
   if (!hydrated || !isAuthenticated || loading || !exercise) return null;
-  const belt = getBeltByDifficulty(exercise.difficulty);
+  const belt = getBeltByDifficulty(exercise.belt || exercise.difficulty);
 
   return (
     <div className="min-h-[100dvh]" style={{ background: "#0c0c0f" }}>

@@ -4,13 +4,12 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/lib/auth-context";
-import { progress as progressApi } from "@/lib/api";
+import { progress as progressApi, type RankingData } from "@/lib/api";
 
 import { Star, Fire, Medal, Crown } from "@phosphor-icons/react";
 import { staggerContainer, staggerItem, hoverButton, viewportOnce } from "@/lib/animations";
 
-interface RankingEntry { userId: string; value: number; }
-interface RankingData { top10: RankingEntry[]; userPosition?: number; userValue?: number; }
+interface RankingEntry { userId: string; value: number; rank?: number; }
 type Tab = "global" | "streak" | "belts";
 
 const tabs: { id: Tab; label: string; icon: typeof Star }[] = [
@@ -32,26 +31,28 @@ export default function RankingPage() {
     if (!hydrated) return;
     if (!isAuthenticated) { router.push("/"); return; }
     Promise.all([
-      progressApi.rankingGlobal(user!.token),
-      progressApi.rankingStreak(user!.token),
-      progressApi.rankingBelts(user!.token),
+      progressApi.rankingGlobal(user!.username, user!.token),
+      progressApi.rankingStreak(user!.username, user!.token),
+      progressApi.rankingBelts(user!.username, user!.token),
     ]).then(([g, s, b]) => setData({
-      global: g as unknown as RankingData,
-      streak: s as unknown as RankingData,
-      belts: b as unknown as RankingData,
+      global: g,
+      streak: s,
+      belts: b,
     })).catch(() => {}).finally(() => setLoading(false));
   }, [hydrated, isAuthenticated, router, user]);
 
   if (!isAuthenticated) return null;
   const current = data[activeTab];
-  const hasData = !loading && current?.top10?.length;
-  const top3 = hasData ? current!.top10.slice(0, 3) : [];
-  const rest = hasData ? current!.top10.slice(3) : [];
+  const top10 = current?.top10 ?? [];
+  const userInTop10 = top10.some((entry) => entry.userId === user?.username);
+  const hasData = !loading && top10.length > 0;
+  const top3 = hasData ? top10.slice(0, 3) : [];
+  const showPodium = hasData && top3.length >= 3;
 
   return (
     <div className="min-h-[100dvh]" style={{ background: "#0c0c0f" }}>
 
-      <main className="page-main max-w-xl mx-auto">
+      <main className="page-main max-w-2xl mx-auto">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -140,7 +141,7 @@ export default function RankingPage() {
         </motion.div>
 
         {/* Podium for top 3 */}
-        {hasData && top3.length >= 3 && (
+        {showPodium && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -181,6 +182,15 @@ export default function RankingPage() {
                   }}
                 >
                   <div style={{ position: "absolute", inset: 0, backgroundImage: "url(/images/textures/dark-wood.webp)", backgroundSize: "cover", backgroundPosition: "center", opacity: 0.35, pointerEvents: "none" }} />
+                  <span style={{
+                    fontSize: "11px",
+                    fontFamily: "var(--font-mono), monospace",
+                    color: podiumColors[podiumIdx],
+                    fontWeight: 700,
+                    letterSpacing: "0.08em",
+                  }}>
+                    #{podiumIdx + 1}
+                  </span>
                   <Crown size={isCenter ? 28 : 22} weight="fill" color={podiumColors[podiumIdx]} />
                   <span style={{
                     fontSize: isCenter ? "15px" : "13px",
@@ -217,10 +227,10 @@ export default function RankingPage() {
             WebkitBackdropFilter: "blur(16px)",
             border: "1px solid rgba(255,255,255,0.06)",
             borderRadius: "16px",
-            overflow: "hidden",
+            marginBottom: "32px",
           }}
         >
-          <div style={{ position: "absolute", inset: 0, backgroundImage: "url(/images/textures/dark-wood.webp)", backgroundSize: "cover", backgroundPosition: "center", opacity: 0.35, pointerEvents: "none" }} />
+          <div style={{ position: "relative", zIndex: 1 }}>
           {loading ? (
             <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "16px" }}>
               {[1,2,3,4,5].map((i) => (
@@ -233,7 +243,7 @@ export default function RankingPage() {
                 />
               ))}
             </div>
-          ) : current?.top10?.length ? (
+          ) : top10.length ? (
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeTab}
@@ -241,25 +251,36 @@ export default function RankingPage() {
                 initial="hidden"
                 animate="visible"
               >
-                {(hasData && top3.length >= 3 ? rest : current.top10).map((entry, i) => {
-                  const realIndex = hasData && top3.length >= 3 ? i + 3 : i;
+                {top10.map((entry, i) => {
+                  const displayRank = entry.rank ?? i + 1;
+                  const isTopThree = displayRank <= 3;
                   return (
-                    <motion.div key={entry.userId} variants={staggerItem}
+                    <motion.div key={`${entry.userId}-${displayRank}`} variants={staggerItem}
                       whileHover={{ backgroundColor: "rgba(255,255,255,0.03)" }}
                       className="flex items-center gap-4"
                       style={{
                         padding: "14px 24px",
-                        borderBottom: i < (hasData && top3.length >= 3 ? rest : current.top10).length - 1 ? "1px solid rgba(255,255,255,0.03)" : "none",
-                        background: entry.userId === user?.username ? "rgba(13,148,136,0.12)" : "transparent",
-                        borderLeft: entry.userId === user?.username ? "3px solid #14b8a6" : "3px solid transparent",
+                        borderBottom: i < top10.length - 1 || (!userInTop10 && current?.userPosition != null)
+                          ? "1px solid rgba(255,255,255,0.03)"
+                          : "none",
+                        background: entry.userId === user?.username
+                          ? "rgba(13,148,136,0.12)"
+                          : isTopThree
+                            ? "rgba(255,255,255,0.02)"
+                            : "transparent",
+                        borderLeft: entry.userId === user?.username
+                          ? "3px solid #14b8a6"
+                          : isTopThree
+                            ? `3px solid ${podiumColors[displayRank - 1]}55`
+                            : "3px solid transparent",
                       }}>
                       <span style={{
-                        width: "24px", textAlign: "center", fontSize: realIndex < 3 ? "14px" : "12px",
+                        width: "24px", textAlign: "center", fontSize: isTopThree ? "14px" : "12px",
                         fontFamily: "var(--font-mono), monospace",
-                        color: realIndex < 3 ? podiumColors[realIndex] : "#3f3f46",
+                        color: isTopThree ? podiumColors[displayRank - 1] : "#3f3f46",
                         fontWeight: 700,
                       }}>
-                        {realIndex < 3 ? <Crown size={16} weight="fill" color={podiumColors[realIndex]} /> : realIndex + 1}
+                        {isTopThree ? <Crown size={16} weight="fill" color={podiumColors[displayRank - 1]} /> : displayRank}
                       </span>
                       <span className="flex-1" style={{ fontSize: "14px", fontWeight: 500, color: entry.userId === user?.username ? "#14b8a6" : "#e4e4e7" }}>
                         {entry.userId}
@@ -276,11 +297,44 @@ export default function RankingPage() {
                     </motion.div>
                   );
                 })}
+
+                {!userInTop10 && current?.userPosition != null && (
+                  <>
+                    <div style={{ padding: "8px 24px", textAlign: "center", fontSize: "12px", color: "#52525b" }}>...</div>
+                    <motion.div
+                      variants={staggerItem}
+                      className="flex items-center gap-4"
+                      style={{
+                        padding: "14px 24px",
+                        background: "rgba(13,148,136,0.12)",
+                        borderLeft: "3px solid #14b8a6",
+                      }}
+                    >
+                      <span style={{
+                        width: "24px", textAlign: "center", fontSize: "12px",
+                        fontFamily: "var(--font-mono), monospace", color: "#3f3f46", fontWeight: 700,
+                      }}>
+                        {current.userPosition}
+                      </span>
+                      <span className="flex-1" style={{ fontSize: "14px", fontWeight: 500, color: "#14b8a6" }}>
+                        {user?.username}
+                        <span style={{ fontSize: "10px", color: "#0d9488", marginLeft: "6px" }}>(tu)</span>
+                      </span>
+                      <span style={{ fontSize: "14px", fontFamily: "var(--font-mono), monospace", color: "#71717a", fontWeight: 500 }}>
+                        {current.userValue ?? 0}
+                      </span>
+                    </motion.div>
+                  </>
+                )}
               </motion.div>
             </AnimatePresence>
           ) : (
-            <div style={{ padding: "48px", textAlign: "center", fontSize: "14px", color: "#71717a" }}>Sin datos</div>
+            <div style={{ padding: "48px", textAlign: "center", fontSize: "14px", color: "#71717a" }}>
+              Sin datos — completa quizzes para aparecer en el ranking
+            </div>
           )}
+          </div>
+          <div style={{ position: "absolute", inset: 0, backgroundImage: "url(/images/textures/dark-wood.webp)", backgroundSize: "cover", backgroundPosition: "center", opacity: 0.35, pointerEvents: "none" }} />
         </motion.div>
       </main>
     </div>

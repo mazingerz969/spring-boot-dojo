@@ -27,6 +27,9 @@ public class SecurityConfig {
     @Value("${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:8080,http://localhost:8090}")
     private String allowedOrigins;
 
+    @Value("${spring.h2.console.enabled:false}")
+    private boolean h2ConsoleEnabled;
+
     public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
         this.jwtAuthFilter = jwtAuthFilter;
     }
@@ -37,14 +40,16 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/h2-console/**").permitAll()
-                .requestMatchers("/privacy-policy.html").permitAll()
-                .requestMatchers("/", "/css/**", "/js/**", "/images/**").permitAll()
-                .requestMatchers("/api/**").authenticated()
-                .anyRequest().permitAll()
-            )
+            .authorizeHttpRequests(auth -> {
+                auth.requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers("/privacy-policy.html").permitAll()
+                    .requestMatchers("/", "/css/**", "/js/**", "/images/**").permitAll();
+                if (h2ConsoleEnabled) {
+                    auth.requestMatchers("/h2-console/**").permitAll();
+                }
+                auth.requestMatchers("/api/**").authenticated()
+                    .anyRequest().permitAll();
+            })
             .headers(headers -> headers.frameOptions(frame -> frame.disable()))
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -56,7 +61,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(Arrays.asList(allowedOrigins.split(",")));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

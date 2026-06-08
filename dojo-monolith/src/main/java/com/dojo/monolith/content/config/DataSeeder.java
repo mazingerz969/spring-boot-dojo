@@ -291,68 +291,192 @@ public class DataSeeder {
     @Bean
     CommandLineRunner seedExercises(CodeExerciseRepository repository) {
         return args -> {
-            if (repository.count() == 0) {
-                repository.saveAll(List.of(
-                    // BLANCO
-                    new CodeExercise(
-                        "Crear un @Bean de configuración",
-                        "Crea una clase de configuración que defina un bean de tipo String llamado 'appName' que retorne \"Spring Boot Dojo\".",
-                        "BLANCO",
-                        "@Configuration\npublic class AppConfig {\n\n    // TODO: Crea un método con @Bean que retorne un String\n\n}",
-                        "@Configuration\npublic class AppConfig {\n\n    @Bean\n    public String appName() {\n        return \"Spring Boot Dojo\";\n    }\n}",
-                        "@Configuration,@Bean,public,return",
-                        "Usa @Configuration en la clase y @Bean en el método. El método debe ser public y retornar un valor."
-                    ),
-                    new CodeExercise(
-                        "Inyección por constructor",
-                        "Crea un servicio que inyecte un repositorio usando inyección por constructor. La clase debe ser un @Service.",
-                        "BLANCO",
-                        "@Service\npublic class UserService {\n\n    // TODO: Inyecta UserRepository por constructor\n\n}",
-                        "@Service\npublic class UserService {\n\n    private final UserRepository userRepository;\n\n    public UserService(UserRepository userRepository) {\n        this.userRepository = userRepository;\n    }\n}",
-                        "@Service,private final,UserRepository,public UserService",
-                        "Declara el campo como private final, crea un constructor que reciba el repositorio. Con un solo constructor, @Autowired es opcional."
-                    ),
-                    new CodeExercise(
-                        "Crear un @Component",
-                        "Crea un componente llamado EmailValidator que tenga un método 'isValid(String email)' que retorne boolean.",
-                        "BLANCO",
-                        "// TODO: Marca esta clase como componente de Spring\npublic class EmailValidator {\n\n    // TODO: Método que valide un email\n\n}",
-                        "@Component\npublic class EmailValidator {\n\n    public boolean isValid(String email) {\n        return email != null && email.contains(\"@\");\n    }\n}",
-                        "@Component,public boolean isValid,String email,return",
-                        "Usa @Component para que Spring lo detecte. El método debe recibir un String y retornar boolean."
-                    ),
+            seedExercisesForBelt(repository, "BLANCO", List.of(
+                new CodeExercise(
+                    "Crear un @Bean de configuración",
+                    "Crea una clase de configuración que defina un bean de tipo String llamado 'appName' que retorne \"Spring Boot Dojo\".",
+                    "BLANCO",
+                    "@Configuration\npublic class AppConfig {\n\n    // TODO: Crea un método con @Bean que retorne un String\n\n}",
+                    "@Configuration\npublic class AppConfig {\n\n    @Bean\n    public String appName() {\n        return \"Spring Boot Dojo\";\n    }\n}",
+                    "@Configuration,@Bean,public,return",
+                    "Usa @Configuration en la clase y @Bean en el método. El método debe ser public y retornar un valor."
+                ),
+                new CodeExercise(
+                    "Inyección por constructor",
+                    "Crea un servicio que inyecte un repositorio usando inyección por constructor. La clase debe ser un @Service.",
+                    "BLANCO",
+                    "@Service\npublic class UserService {\n\n    // TODO: Inyecta UserRepository por constructor\n\n}",
+                    "@Service\npublic class UserService {\n\n    private final UserRepository userRepository;\n\n    public UserService(UserRepository userRepository) {\n        this.userRepository = userRepository;\n    }\n}",
+                    "@Service,private final,UserRepository,public UserService",
+                    "Declara el campo como private final, crea un constructor que reciba el repositorio. Con un solo constructor, @Autowired es opcional."
+                ),
+                new CodeExercise(
+                    "Crear un @Component",
+                    "Crea un componente llamado EmailValidator que tenga un método 'isValid(String email)' que retorne boolean.",
+                    "BLANCO",
+                    "// TODO: Marca esta clase como componente de Spring\npublic class EmailValidator {\n\n    // TODO: Método que valide un email\n\n}",
+                    "@Component\npublic class EmailValidator {\n\n    public boolean isValid(String email) {\n        return email != null && email.contains(\"@\");\n    }\n}",
+                    "@Component,public boolean isValid,String email,return",
+                    "Usa @Component para que Spring lo detecte. El método debe recibir un String y retornar boolean."
+                )
+            ));
 
-                    // AMARILLO
-                    new CodeExercise(
-                        "Crear un @RestController con GET",
-                        "Crea un controlador REST para productos con un endpoint GET /api/products que retorne una lista de strings.",
-                        "AMARILLO",
-                        "// TODO: Marca como controlador REST\n// TODO: Mapea a /api/products\npublic class ProductController {\n\n    // TODO: Endpoint GET que retorne lista de productos\n\n}",
-                        "@RestController\n@RequestMapping(\"/api/products\")\npublic class ProductController {\n\n    @GetMapping\n    public List<String> getAll() {\n        return List.of(\"Portátil\", \"Ratón\", \"Teclado\");\n    }\n}",
-                        "@RestController,@RequestMapping,@GetMapping,public,List",
-                        "Usa @RestController + @RequestMapping para la ruta base. @GetMapping para el método GET."
-                    ),
-                    new CodeExercise(
-                        "Crear una entidad JPA",
-                        "Crea una entidad JPA 'Product' con campos: id (Long, autogenerado), name (String, no nulo) y price (Double).",
-                        "AMARILLO",
-                        "// TODO: Marca como entidad JPA\npublic class Product {\n\n    // TODO: Id autogenerado\n    private Long id;\n\n    // TODO: Campo obligatorio\n    private String name;\n\n    private Double price;\n}",
-                        "@Entity\n@Table(name = \"products\")\npublic class Product {\n\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n\n    @Column(nullable = false)\n    private String name;\n\n    private Double price;\n}",
-                        "@Entity,@Table,@Id,@GeneratedValue,@Column,nullable = false",
-                        "Usa @Entity y @Table en la clase. @Id + @GeneratedValue para el id. @Column(nullable = false) para campos obligatorios."
-                    ),
-                    new CodeExercise(
-                        "Crear un DTO con validación",
-                        "Crea un DTO 'CreateProductRequest' con: name (@NotBlank), price (@Min(0)) y description (@Size(max=500)).",
-                        "AMARILLO",
-                        "public class CreateProductRequest {\n\n    // TODO: name no puede estar vacío\n    private String name;\n\n    // TODO: price mínimo 0\n    private Double price;\n\n    // TODO: description máximo 500 caracteres\n    private String description;\n}",
-                        "public class CreateProductRequest {\n\n    @NotBlank\n    private String name;\n\n    @Min(0)\n    private Double price;\n\n    @Size(max = 500)\n    private String description;\n}",
-                        "@NotBlank,@Min,@Size,private String name,private Double price",
-                        "Usa @NotBlank para strings obligatorios, @Min para valores mínimos, @Size para limitar longitud."
-                    )
-                ));
-            }
+            seedExercisesForBelt(repository, "AMARILLO", List.of(
+                new CodeExercise(
+                    "Crear un @RestController con GET",
+                    "Crea un controlador REST para productos con un endpoint GET /api/products que retorne una lista de strings.",
+                    "AMARILLO",
+                    "// TODO: Marca como controlador REST\n// TODO: Mapea a /api/products\npublic class ProductController {\n\n    // TODO: Endpoint GET que retorne lista de productos\n\n}",
+                    "@RestController\n@RequestMapping(\"/api/products\")\npublic class ProductController {\n\n    @GetMapping\n    public List<String> getAll() {\n        return List.of(\"Portátil\", \"Ratón\", \"Teclado\");\n    }\n}",
+                    "@RestController,@RequestMapping,@GetMapping,public,List",
+                    "Usa @RestController + @RequestMapping para la ruta base. @GetMapping para el método GET."
+                ),
+                new CodeExercise(
+                    "Crear una entidad JPA",
+                    "Crea una entidad JPA 'Product' con campos: id (Long, autogenerado), name (String, no nulo) y price (Double).",
+                    "AMARILLO",
+                    "// TODO: Marca como entidad JPA\npublic class Product {\n\n    // TODO: Id autogenerado\n    private Long id;\n\n    // TODO: Campo obligatorio\n    private String name;\n\n    private Double price;\n}",
+                    "@Entity\n@Table(name = \"products\")\npublic class Product {\n\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n\n    @Column(nullable = false)\n    private String name;\n\n    private Double price;\n}",
+                    "@Entity,@Table,@Id,@GeneratedValue,@Column,nullable = false",
+                    "Usa @Entity y @Table en la clase. @Id + @GeneratedValue para el id. @Column(nullable = false) para campos obligatorios."
+                ),
+                new CodeExercise(
+                    "Crear un DTO con validación",
+                    "Crea un DTO 'CreateProductRequest' con: name (@NotBlank), price (@Min(0)) y description (@Size(max=500)).",
+                    "AMARILLO",
+                    "public class CreateProductRequest {\n\n    // TODO: name no puede estar vacío\n    private String name;\n\n    // TODO: price mínimo 0\n    private Double price;\n\n    // TODO: description máximo 500 caracteres\n    private String description;\n}",
+                    "public class CreateProductRequest {\n\n    @NotBlank\n    private String name;\n\n    @Min(0)\n    private Double price;\n\n    @Size(max = 500)\n    private String description;\n}",
+                    "@NotBlank,@Min,@Size,private String name,private Double price",
+                    "Usa @NotBlank para strings obligatorios, @Min para valores mínimos, @Size para limitar longitud."
+                )
+            ));
+
+            seedExercisesForBelt(repository, "NARANJA", List.of(
+                new CodeExercise(
+                    "Crear un JpaRepository",
+                    "Crea una interfaz ProductRepository que extienda JpaRepository con Product como entidad y Long como tipo de id.",
+                    "NARANJA",
+                    "// TODO: Interfaz repositorio JPA\npublic interface ProductRepository {\n\n}",
+                    "public interface ProductRepository extends JpaRepository<Product, Long> {\n}",
+                    "extends JpaRepository,Product,Long",
+                    "Los repositorios Spring Data son interfaces que extienden JpaRepository<Entity, Id>."
+                ),
+                new CodeExercise(
+                    "Endpoint POST con @RequestBody",
+                    "Añade un método POST en ProductController que reciba CreateProductRequest con @RequestBody y retorne ResponseEntity.",
+                    "NARANJA",
+                    "@RestController\n@RequestMapping(\"/api/products\")\npublic class ProductController {\n\n    // TODO: POST que reciba el DTO en el body\n\n}",
+                    "@RestController\n@RequestMapping(\"/api/products\")\npublic class ProductController {\n\n    @PostMapping\n    public ResponseEntity<Product> create(@RequestBody CreateProductRequest request) {\n        return ResponseEntity.status(HttpStatus.CREATED).build();\n    }\n}",
+                    "@PostMapping,@RequestBody,ResponseEntity,HttpStatus.CREATED",
+                    "Usa @PostMapping para crear recursos. @RequestBody deserializa el JSON del cliente."
+                ),
+                new CodeExercise(
+                    "Manejo de excepciones con @ControllerAdvice",
+                    "Crea un GlobalExceptionHandler con @ControllerAdvice y un método que capture ResourceNotFoundException con @ExceptionHandler.",
+                    "NARANJA",
+                    "// TODO: Clase advice global\npublic class GlobalExceptionHandler {\n\n    // TODO: Maneja ResourceNotFoundException\n\n}",
+                    "@ControllerAdvice\npublic class GlobalExceptionHandler {\n\n    @ExceptionHandler(ResourceNotFoundException.class)\n    public ResponseEntity<String> handleNotFound(ResourceNotFoundException ex) {\n        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());\n    }\n}",
+                    "@ControllerAdvice,@ExceptionHandler,ResourceNotFoundException,ResponseEntity,HttpStatus.NOT_FOUND",
+                    "@ControllerAdvice centraliza el manejo de errores. @ExceptionHandler indica qué excepción captura cada método."
+                )
+            ));
+
+            seedExercisesForBelt(repository, "VERDE", List.of(
+                new CodeExercise(
+                    "Configurar SecurityFilterChain",
+                    "Crea una clase SecurityConfig con un bean SecurityFilterChain que deshabilite csrf y permita /api/auth/**.",
+                    "VERDE",
+                    "@Configuration\npublic class SecurityConfig {\n\n    // TODO: Bean SecurityFilterChain\n\n}",
+                    "@Configuration\npublic class SecurityConfig {\n\n    @Bean\n    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {\n        http.csrf(csrf -> csrf.disable())\n            .authorizeHttpRequests(auth -> auth\n                .requestMatchers(\"/api/auth/**\").permitAll()\n                .anyRequest().authenticated());\n        return http.build();\n    }\n}",
+                    "@Configuration,@Bean,SecurityFilterChain,csrf,permitAll,authenticated",
+                    "SecurityFilterChain define las reglas HTTP. csrf().disable() es común en APIs REST con JWT."
+                ),
+                new CodeExercise(
+                    "Crear un filtro JWT",
+                    "Crea JwtAuthFilter que extienda OncePerRequestFilter e implemente doFilterInternal.",
+                    "VERDE",
+                    "public class JwtAuthFilter extends OncePerRequestFilter {\n\n    // TODO: Implementa doFilterInternal\n\n}",
+                    "public class JwtAuthFilter extends OncePerRequestFilter {\n\n    @Override\n    protected void doFilterInternal(HttpServletRequest request,\n                                    HttpServletResponse response,\n                                    FilterChain filterChain) throws ServletException, IOException {\n        filterChain.doFilter(request, response);\n    }\n}",
+                    "extends OncePerRequestFilter,doFilterInternal,FilterChain,doFilter",
+                    "OncePerRequestFilter garantiza una sola ejecución por petición. Llama filterChain.doFilter al final."
+                ),
+                new CodeExercise(
+                    "Proteger endpoint con @PreAuthorize",
+                    "Crea un método en AdminController con @PreAuthorize(\"hasRole('ADMIN')\") que retorne una lista.",
+                    "VERDE",
+                    "@RestController\npublic class AdminController {\n\n    // TODO: Solo admins pueden acceder\n\n}",
+                    "@RestController\npublic class AdminController {\n\n    @PreAuthorize(\"hasRole('ADMIN')\")\n    @GetMapping(\"/api/admin/users\")\n    public List<String> listUsers() {\n        return List.of(\"admin\", \"user\");\n    }\n}",
+                    "@PreAuthorize,hasRole,ADMIN,@GetMapping,List",
+                    "@PreAuthorize evalúa expresiones SpEL antes de ejecutar el método. Activa @EnableMethodSecurity en config."
+                )
+            ));
+
+            seedExercisesForBelt(repository, "MARRON", List.of(
+                new CodeExercise(
+                    "Cliente Feign para microservicio",
+                    "Crea OrderClient como @FeignClient(name = \"order-service\") con un método GET /api/orders.",
+                    "MARRON",
+                    "// TODO: Cliente Feign\npublic interface OrderClient {\n\n}",
+                    "@FeignClient(name = \"order-service\")\npublic interface OrderClient {\n\n    @GetMapping(\"/api/orders\")\n    List<String> getOrders();\n}",
+                    "@FeignClient,order-service,@GetMapping,/api/orders,List",
+                    "@FeignClient declara un cliente HTTP declarativo. El name debe coincidir con el servicio en el registry."
+                ),
+                new CodeExercise(
+                    "Circuit breaker con Resilience4j",
+                    "Añade @CircuitBreaker(name = \"payment\") a un método de PaymentService que llame a un servicio externo.",
+                    "MARRON",
+                    "@Service\npublic class PaymentService {\n\n    public String charge(String orderId) {\n        return \"ok\";\n    }\n}",
+                    "@Service\npublic class PaymentService {\n\n    @CircuitBreaker(name = \"payment\", fallbackMethod = \"chargeFallback\")\n    public String charge(String orderId) {\n        return remotePaymentClient.charge(orderId);\n    }\n\n    public String chargeFallback(String orderId, Throwable ex) {\n        return \"pending\";\n    }\n}",
+                    "@CircuitBreaker,name = \"payment\",fallbackMethod,chargeFallback",
+                    "Resilience4j abre el circuito tras fallos repetidos. fallbackMethod debe tener la misma firma + Throwable."
+                ),
+                new CodeExercise(
+                    "Configuración de Eureka Client",
+                    "Crea application.yml con eureka.client.service-url.defaultZone apuntando a http://localhost:8761/eureka/.",
+                    "MARRON",
+                    "spring:\n  application:\n    name: product-service\n\n# TODO: Configura Eureka client",
+                    "spring:\n  application:\n    name: product-service\n\neureka:\n  client:\n    service-url:\n      defaultZone: http://localhost:8761/eureka/",
+                    "eureka,client,service-url,defaultZone,8761",
+                    "Eureka registra el microservicio. defaultZone es la URL del servidor de discovery."
+                )
+            ));
+
+            seedExercisesForBelt(repository, "NEGRO", List.of(
+                new CodeExercise(
+                    "Aspecto con @Around",
+                    "Crea LoggingAspect con @Aspect y un método @Around que mida tiempo de ejecución con ProceedingJoinPoint.",
+                    "NEGRO",
+                    "// TODO: Aspecto de logging\npublic class LoggingAspect {\n\n}",
+                    "@Aspect\n@Component\npublic class LoggingAspect {\n\n    @Around(\"@annotation(Timed)\")\n    public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {\n        long start = System.currentTimeMillis();\n        Object result = joinPoint.proceed();\n        long elapsed = System.currentTimeMillis() - start;\n        return result;\n    }\n}",
+                    "@Aspect,@Around,ProceedingJoinPoint,proceed,System.currentTimeMillis",
+                    "AOP intercepta métodos sin modificar su código. @Around controla antes y después con joinPoint.proceed()."
+                ),
+                new CodeExercise(
+                    "Anotación personalizada @Timed",
+                    "Define la anotación @Timed con @Target(ElementType.METHOD) y @Retention(RetentionPolicy.RUNTIME).",
+                    "NEGRO",
+                    "// TODO: Anotación personalizada\npublic @interface Timed {\n\n}",
+                    "@Target(ElementType.METHOD)\n@Retention(RetentionPolicy.RUNTIME)\npublic @interface Timed {\n}",
+                    "@Target,ElementType.METHOD,@Retention,RetentionPolicy.RUNTIME,@interface",
+                    "Las anotaciones custom necesitan @Target (dónde aplica) y @Retention RUNTIME para usarse con AOP/reflection."
+                ),
+                new CodeExercise(
+                    "Evento de dominio con @EventListener",
+                    "Crea OrderEventListener con un método @EventListener que reciba OrderCreatedEvent y registre el pedido.",
+                    "NEGRO",
+                    "@Component\npublic class OrderEventListener {\n\n    // TODO: Escucha OrderCreatedEvent\n\n}",
+                    "@Component\npublic class OrderEventListener {\n\n    @EventListener\n    public void onOrderCreated(OrderCreatedEvent event) {\n        System.out.println(\"Pedido creado: \" + event.getOrderId());\n    }\n}",
+                    "@EventListener,OrderCreatedEvent,onOrderCreated,getOrderId",
+                    "Spring Events desacopla productores y consumidores. Publica con ApplicationEventPublisher.publishEvent()."
+                )
+            ));
         };
+    }
+
+    private void seedExercisesForBelt(CodeExerciseRepository repository, String belt, List<CodeExercise> exercises) {
+        if (repository.findByBelt(belt).isEmpty()) {
+            repository.saveAll(exercises);
+        }
     }
 
     @Bean

@@ -299,7 +299,7 @@ public class GuiaCapitulo06 {
                         + "      defaultZone: http://localhost:8761/eureka/\n"
                         + "\n"
                         + "jwt:\n"
-                        + "  secret: dojo-secret-key-that-is-at-least-256-bits-long-for-hs256-algorithm-security</code></pre>"
+                        + "  secret: ${JWT_SECRET}</code></pre>"
                         + "<p><b>Desglose de cada ruta:</b></p>"
                         + "<table class='table table-sm table-dark'>"
                         + "<thead><tr><th>Petición al Gateway</th><th>StripPrefix</th><th>Llega al servicio como</th><th>JWT</th></tr></thead>"
