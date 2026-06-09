@@ -2,7 +2,7 @@
 
 Plataforma interactiva para aprender **Spring Boot** construyendo una aplicación real: flashcards, quizzes, ejercicios de código y sistema de cinturones (blanco → negro).
 
-**Demo:** *(añade aquí tu URL cuando despliegues en el VPS)*  
+**Demo en vivo:** http://spring-dojo.duckdns.org  
 **Repositorio (código):** https://github.com/mazingerz969/spring-boot-dojo
 
 > **Código ≠ app online.** GitHub guarda el repo; la demo pública va en un **servidor VPS** con Docker. Ver **[DEPLOY.md](./DEPLOY.md)** → sección *¿Dónde subo qué?*.
