@@ -35,6 +35,10 @@ Servidor VPS ◄──git clone──┘
 
 No uses solo Vercel/Netlify para este proyecto: necesitas Java + PostgreSQL siempre encendidos (Docker en un VPS).
 
+### Compartir VPS con SolStay (Laravel)
+
+Si también despliegas [SolStay](https://github.com/mazingerz969/solstay-web) en el mismo servidor, el nginx de este proyecto actúa como **gateway** para ambos subdominios (`dojo.*` y `solstay.*`) vía la red Docker `portfolio-net`. Guía completa en el repo de SolStay: `DEPLOY.md`.
+
 ---
 
 ## Recomendación de stack

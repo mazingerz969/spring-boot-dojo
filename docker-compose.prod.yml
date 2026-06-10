@@ -76,9 +76,13 @@ services:
       - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf:ro,z
     networks:
       - dojo-net
+      - portfolio-net
 
 volumes:
   postgres_data:
 
 networks:
   dojo-net:
+  portfolio-net:
+    external: true
+    name: portfolio-net

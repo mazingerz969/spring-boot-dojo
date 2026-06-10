@@ -10,6 +10,8 @@ if [[ ! -f .env.production ]]; then
   exit 1
 fi
 
+docker network create portfolio-net 2>/dev/null || true
+
 docker compose -f docker-compose.prod.yml --env-file .env.production up -d --build "$@"
 
 echo ""
